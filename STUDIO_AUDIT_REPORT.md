@@ -10,7 +10,7 @@ The **Ritesh Farswan Photography** web platform was engineered to reject contemp
 
 ```
    +--------------------------------------------------------------------------+
-   |                       ADITI RANE PHOTOGRAPHY                             |
+   |                       RITESH FARSWAN PHOTOGRAPHY                         |
    |                                                                          |
    |   [ PUBLIC FINE-ART MONOGRAPH ]         [ PRIVATE CLIENT PORTAL ]        |
    |   - Curated works & 35mm film strip     - Tokenized private proofing     |
@@ -228,3 +228,14 @@ availability_blocks  -- Blackout dates and confirmed bookings
 - [x] **Dual Sites:** Fully independent public portfolio and studio administration backoffice.
 - [x] **Python 3.15 Ready:** 100% syntactically verified with `py_compile`.
 - [x] **Standalone Portability:** Packaged into a self-contained archive ready for immediate deployment.
+
+---
+
+## 10. Systems Architect & Lead Engineer
+
+Designed, architected, and built by **Shomay Singh Parihar**:
+- **GitHub:** [@Shomay12 (github.com/shomay12)](https://github.com/Shomay12)
+- **Portfolio & Systems:** [shomaysinghparihar.online](https://shomaysinghparihar.online)
+- **X / Twitter:** [@KJshomayyy](https://x.com/KJshomayyy)
+- **Platform Developer Documentation:** Available in-app at [`developer.html`](photographer-portfolio/website/developer.html)
+- **Focus Areas:** AI Engineering, Machine Learning, Retrieval-Augmented Generation (RAG), Full-Stack Systems, and Predictive Telemetry.

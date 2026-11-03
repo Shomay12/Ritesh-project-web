@@ -17,6 +17,7 @@ photographer-portfolio/
 │   ├── index.html               # Home (curated portfolio, lens simulator, film stocks, RAW vs graded)
 │   ├── work.html                # Full archive (Masonry, Contact Sheet 35mm, Editorial Spread + Loupe)
 │   ├── about.html               # Bio, philosophy, exhibitions, publication record, gear standards
+│   ├── developer.html           # Developer & Systems Architect profile (Shomay Singh Parihar - github.com/shomay12)
 │   ├── services.html            # Collections I, II, III, pricing, process, comprehensive FAQ
 │   ├── booking.html             # Interactive availability calendar, multi-step booking inquiry
 │   ├── contact.html             # Direct correspondence form & studio contact details
@@ -188,5 +189,17 @@ A continuous deployment workflow is included in [`.github/workflows/deploy.yml`]
 1. In your GitHub repository, navigate to **Settings &rarr; Pages**.
 2. Under **Build and deployment &rarr; Source**, select **GitHub Actions**.
 3. Every commit pushed to `main` (or triggered via **Actions &rarr; Deploy Website & Studio**) will automatically assemble and publish both sites live.
+
+---
+
+## 7. Developer & Systems Architecture
+
+Designed and engineered by **Shomay Singh Parihar** ([@Shomay12](https://github.com/Shomay12)):
+- **GitHub Profile:** [github.com/shomay12](https://github.com/shomay12)
+- **Personal Portfolio:** [shomaysinghparihar.online](https://shomaysinghparihar.online)
+- **X / Twitter:** [@KJshomayyy](https://x.com/KJshomayyy)
+- **Developer Page:** [`photographer-portfolio/website/developer.html`](photographer-portfolio/website/developer.html) / `developer.html` on live deployment
+- **Featured Systems:** UniAssist (RAG & FAISS), Industrial Machine Monitoring (IoT & Random Forest), Finance Expenditure Intelligence (Isolation Forests & Time-Series), HotTea (Privacy-First Flutter/Local LLM Browser), Duezy (AI Payment Automation), and Ritesh Photography Platform & Studio Suite.
+
 
 
