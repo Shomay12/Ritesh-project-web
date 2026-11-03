@@ -601,6 +601,19 @@
   }
 
   /* -------------------------------------------------------------------
+     12. Dynamic Studio Admin Link Resolution
+     ------------------------------------------------------------------- */
+  function initStudioLinks() {
+    var adminLinks = document.querySelectorAll('a.studio-admin-link');
+    if (!adminLinks.length) return;
+    if (window.location.protocol === 'file:' && window.location.pathname.indexOf('/website/') !== -1) {
+      adminLinks.forEach(function (a) {
+        a.setAttribute('href', '../studio/index.html');
+      });
+    }
+  }
+
+  /* -------------------------------------------------------------------
      DOM Ready Boot
      ------------------------------------------------------------------- */
   function init() {
@@ -616,6 +629,7 @@
     initCurtainReveals();
     initWorkViewSwitcher();
     initLightboxLoupe();
+    initStudioLinks();
   }
 
   if (document.readyState === 'loading') {

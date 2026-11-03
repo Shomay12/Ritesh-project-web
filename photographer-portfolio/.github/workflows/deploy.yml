@@ -1,0 +1,89 @@
+name: Deploy Website & Studio to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build and Assemble Sites for Deployment
+        run: |
+          echo "=== Assembling Client Website and Studio Portal ==="
+          mkdir -p _site
+
+          # 1. Locate source directories
+          if [ -d "photographer-portfolio/website" ]; then
+            SRC_WEBSITE="photographer-portfolio/website"
+            SRC_STUDIO="photographer-portfolio/studio"
+          else
+            SRC_WEBSITE="website"
+            SRC_STUDIO="studio"
+          fi
+
+          echo "Client Website source: $SRC_WEBSITE"
+          echo "Studio Portal source:  $SRC_STUDIO"
+
+          # 2. Copy Public Client Website to root of deployment
+          cp -r "$SRC_WEBSITE"/* _site/
+
+          # 3. Copy Studio Administration Portal into /studio/
+          mkdir -p _site/studio
+          cp -r "$SRC_STUDIO"/* _site/studio/
+
+          # 4. Prevent GitHub Pages from running Jekyll
+          touch _site/.nojekyll
+
+          # 5. Optional Secret Injection (if secrets are set in repository settings)
+          if [ -n "${{ secrets.SUPABASE_URL }}" ] && [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
+            echo "Injecting Supabase repository secrets into config.js..."
+            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/assets/js/config.js
+            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/assets/js/config.js
+            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/studio/assets/js/config.js
+            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/studio/assets/js/config.js
+          fi
+
+          if [ -n "${{ secrets.EMAILJS_PUBLIC_KEY }}" ]; then
+            echo "Injecting EmailJS repository secrets into config.js..."
+            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/assets/js/config.js
+            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/assets/js/config.js
+            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/assets/js/config.js
+            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/studio/assets/js/config.js
+            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/studio/assets/js/config.js
+            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/studio/assets/js/config.js
+          fi
+
+          echo "=== Verification of Staged Files ==="
+          ls -la _site
+          ls -la _site/client
+          ls -la _site/studio
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

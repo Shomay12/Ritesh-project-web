@@ -162,3 +162,18 @@ Edit `automation/.env` with your Supabase service role key, EmailJS private cred
 ### Automated GitHub Actions
 A workflow is already included in `.github/workflows/studio-automation.yml`. Add your credentials as GitHub repository secrets (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`, `EMAILJS_PRIVATE_KEY`, `OWNER_EMAIL`). It runs automatically every day at **09:00 IST (03:30 UTC)**.
 
+---
+
+## 6. One-Click Dual-Site Deployment (GitHub Pages)
+
+A continuous deployment workflow is included in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) that bundles and publishes both sites in parallel:
+- **Public Client Website**: `https://<username>.github.io/<repo>/`
+- **Private Client Portal**: `https://<username>.github.io/<repo>/client/`
+- **Studio Administration Portal**: `https://<username>.github.io/<repo>/studio/`
+
+### Enabling GitHub Pages Deployment
+1. In your GitHub repository, navigate to **Settings &rarr; Pages**.
+2. Under **Build and deployment &rarr; Source**, select **GitHub Actions**.
+3. Every commit pushed to `main` (or triggered via **Actions &rarr; Deploy Website & Studio**) will automatically assemble and publish both sites live.
+
+
