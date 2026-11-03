@@ -2,7 +2,8 @@
    Creative Interactions — Ritesh Farswan Photography
    Analog film aesthetics, Web Audio shutter, RAW vs Graded comparison,
    Darkroom mode toggle, Film Stock emulation (Portra / Tri-X / Fuji),
-   and Interactive Lens Focal Length Simulator.
+   Interactive Lens Focal Length Simulator, Uninterrupted Background Music,
+   and Zero-Refresh SPA Navigation across all desktop and mobile views.
    Strictly NO custom laggy cursor. Standard natural browser pointers only.
    ===================================================================== */
 
@@ -70,6 +71,8 @@
   function initSoundToggle() {
     var toggleBtn = document.getElementById('soundToggleBtn');
     if (!toggleBtn) return;
+    if (window._soundToggleBound) return;
+    window._soundToggleBound = true;
 
     var saved = localStorage.getItem('studio_sound_mode');
     if (saved === 'on') {
@@ -101,12 +104,16 @@
   }
 
   /* -------------------------------------------------------------------
-     1b. Traditional Wedding Ambient Background Music
-     Auto-plays in the webpage in continuous loop at 35% volume (30-40%).
+     1b. Traditional Wedding Ambient Background Music Suite
+     Auto-plays in continuous loop at 35% volume (30-40%).
+     Uninterrupted and continuous across all desktop and mobile navigation.
+     Preserves exact playback second across reloads and page transitions.
      ------------------------------------------------------------------- */
   var ambienceAudio = null;
   var ambienceEnabled = true;
   var ambienceTargetVolume = 0.35; // 35% volume (within 30-40% range)
+  var initialSeekCompleted = false;
+  var targetSeekTime = 0;
 
   function resolveMusicPath() {
     var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
@@ -114,26 +121,49 @@
     return base + 'assets/audio/wedding-ambience.mp3';
   }
 
-  function applySavedTimestamp() {
-    if (!ambienceAudio) return;
+  function readSavedTimestamp() {
     try {
       var saved = sessionStorage.getItem('studio_ambience_time') || localStorage.getItem('studio_ambience_time');
-      var time = parseFloat(saved || '0');
-      if (time > 0.5 && isFinite(time)) {
-        if (!ambienceAudio.duration || time < ambienceAudio.duration) {
-          ambienceAudio.currentTime = time;
+      var val = parseFloat(saved || '0');
+      return (val > 0.5 && isFinite(val)) ? val : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  targetSeekTime = readSavedTimestamp();
+  if (targetSeekTime <= 0.5) {
+    initialSeekCompleted = true;
+  }
+
+  function applySavedTimestamp() {
+    if (!ambienceAudio) return;
+    if (initialSeekCompleted) return;
+    try {
+      if (targetSeekTime > 0.5 && isFinite(targetSeekTime)) {
+        if (ambienceAudio.readyState >= 1) { // HAVE_METADATA or higher
+          if (!ambienceAudio.duration || targetSeekTime < ambienceAudio.duration) {
+            ambienceAudio.currentTime = targetSeekTime;
+          }
+          initialSeekCompleted = true;
         }
+      } else {
+        initialSeekCompleted = true;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Seek error:', e);
+    }
   }
 
   function saveCurrentTimestamp() {
     if (!ambienceAudio) return;
+    // CRITICAL: Prevent early timeupdate events from wiping saved timestamp
+    if (!initialSeekCompleted && targetSeekTime > 0.5) return;
     try {
       var cur = ambienceAudio.currentTime;
       if (cur > 0.5 && isFinite(cur)) {
-        sessionStorage.setItem('studio_ambience_time', cur.toString());
-        localStorage.setItem('studio_ambience_time', cur.toString());
+        sessionStorage.setItem('studio_ambience_time', cur.toFixed(2));
+        localStorage.setItem('studio_ambience_time', cur.toFixed(2));
       }
     } catch (e) {}
   }
@@ -162,12 +192,10 @@
         saveCurrentTimestamp();
       });
 
-      ambienceAudio.addEventListener('loadedmetadata', function () {
-        applySavedTimestamp();
-      });
-
-      ambienceAudio.addEventListener('canplay', function () {
-        applySavedTimestamp();
+      ['loadedmetadata', 'canplay', 'canplaythrough', 'playing', 'seeked'].forEach(function (evt) {
+        ambienceAudio.addEventListener(evt, function () {
+          applySavedTimestamp();
+        });
       });
 
       window.addEventListener('beforeunload', saveCurrentTimestamp);
@@ -247,7 +275,6 @@
   }
 
   function initAmbienceToggle() {
-    var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
     initAmbienceAudio();
 
     var saved = localStorage.getItem('studio_ambience_music');
@@ -261,22 +288,25 @@
       updateAmbienceButtons(false);
     }
 
-    btns.forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        ambienceEnabled = !ambienceEnabled;
-        if (ambienceEnabled) {
-          initAmbienceAudio();
-          startAmbienceMusic();
-          updateAmbienceButtons(true);
-          localStorage.setItem('studio_ambience_music', 'on');
-        } else {
-          stopAmbienceMusic();
-          updateAmbienceButtons(false);
-          localStorage.setItem('studio_ambience_music', 'off');
-        }
-        playShutterClick();
-      });
+    if (window._ambienceToggleBound) return;
+    window._ambienceToggleBound = true;
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('#ambienceToggleBtn, #mobileAmbienceBtn');
+      if (!btn) return;
+      e.stopPropagation();
+      ambienceEnabled = !ambienceEnabled;
+      if (ambienceEnabled) {
+        initAmbienceAudio();
+        startAmbienceMusic();
+        updateAmbienceButtons(true);
+        localStorage.setItem('studio_ambience_music', 'on');
+      } else {
+        stopAmbienceMusic();
+        updateAmbienceButtons(false);
+        localStorage.setItem('studio_ambience_music', 'off');
+      }
+      playShutterClick();
     });
   }
 
@@ -286,6 +316,8 @@
   function initDarkroomToggle() {
     var toggleBtn = document.getElementById('darkroomToggleBtn');
     if (!toggleBtn) return;
+    if (window._darkroomToggleBound) return;
+    window._darkroomToggleBound = true;
 
     var saved = localStorage.getItem('studio_darkroom_mode');
     if (saved === 'darkroom') {
@@ -337,11 +369,11 @@
     }
 
     stockButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.onclick = function () {
         var stock = btn.getAttribute('data-stock');
         applyStock(stock);
         localStorage.setItem('studio_film_stock', stock);
-      });
+      };
     });
 
     var saved = localStorage.getItem('studio_film_stock') || 'portra';
@@ -383,7 +415,7 @@
     };
 
     buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.onclick = function () {
         var fl = btn.getAttribute('data-lens');
         var profile = lensProfiles[fl];
         if (!profile) return;
@@ -399,7 +431,7 @@
         if (lensDesc) lensDesc.textContent = profile.desc;
 
         playShutterClick();
-      });
+      };
     });
   }
 
@@ -412,6 +444,7 @@
 
     var handle = slider.querySelector('.slider-handle');
     var rawLayer = slider.querySelector('.slider-raw');
+    if (!handle || !rawLayer) return;
     var isDragging = false;
 
     function setPosition(xPercent) {
@@ -442,11 +475,11 @@
       }
     }
 
-    slider.addEventListener('mousedown', startDrag);
+    slider.onmousedown = startDrag;
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', stopDrag);
 
-    slider.addEventListener('touchstart', startDrag, { passive: true });
+    slider.ontouchstart = startDrag;
     window.addEventListener('touchmove', onMove, { passive: true });
     window.addEventListener('touchend', stopDrag);
 
@@ -461,7 +494,7 @@
 
     var tiltCards = document.querySelectorAll('.tilt-frame');
     tiltCards.forEach(function (card) {
-      card.addEventListener('mousemove', function (e) {
+      card.onmousemove = function (e) {
         var rect = card.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
@@ -472,11 +505,11 @@
         var rotateY = ((x - centerX) / centerX) * 6.5;
 
         card.style.transform = 'perspective(900px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) scale3d(1.018, 1.018, 1.018)';
-      });
+      };
 
-      card.addEventListener('mouseleave', function () {
+      card.onmouseleave = function () {
         card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-      });
+      };
     });
   }
 
@@ -490,30 +523,30 @@
     var isDown = false;
     var startX, scrollLeft;
 
-    strip.addEventListener('mousedown', function (e) {
+    strip.onmousedown = function (e) {
       isDown = true;
       strip.classList.add('is-dragging');
       startX = e.pageX - strip.offsetLeft;
       scrollLeft = strip.scrollLeft;
-    });
+    };
 
-    strip.addEventListener('mouseleave', function () {
+    strip.onmouseleave = function () {
       isDown = false;
       strip.classList.remove('is-dragging');
-    });
+    };
 
-    strip.addEventListener('mouseup', function () {
+    strip.onmouseup = function () {
       isDown = false;
       strip.classList.remove('is-dragging');
-    });
+    };
 
-    strip.addEventListener('mousemove', function (e) {
+    strip.onmousemove = function (e) {
       if (!isDown) return;
       e.preventDefault();
       var x = e.pageX - strip.offsetLeft;
       var walk = (x - startX) * 1.8;
       strip.scrollLeft = scrollLeft - walk;
-    });
+    };
   }
 
   /* -------------------------------------------------------------------
@@ -522,6 +555,7 @@
   function initStudioClock() {
     var clockEl = document.getElementById('liveStudioClock');
     if (!clockEl) return;
+    if (window._studioClockInterval) return;
 
     function update() {
       try {
@@ -540,7 +574,7 @@
       }
     }
     update();
-    setInterval(update, 1000);
+    window._studioClockInterval = setInterval(update, 1000);
   }
 
   /* -------------------------------------------------------------------
@@ -575,7 +609,7 @@
     var grid = document.getElementById('workGrid');
     if (!switcher || !grid) return;
 
-    switcher.addEventListener('click', function (e) {
+    switcher.onclick = function (e) {
       var btn = e.target.closest('button[data-view]');
       if (!btn) return;
 
@@ -590,12 +624,15 @@
 
       playShutterClick();
       localStorage.setItem('studio_work_view_mode', mode);
-    });
+    };
 
-    var saved = localStorage.getItem('studio_work_view_mode');
-    if (saved) {
-      var targetBtn = switcher.querySelector('button[data-view="' + saved + '"]');
-      if (targetBtn) targetBtn.click();
+    var saved = localStorage.getItem('studio_work_view_mode') || 'masonry';
+    var targetBtn = switcher.querySelector('button[data-view="' + saved + '"]');
+    if (targetBtn) {
+      switcher.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+      targetBtn.setAttribute('aria-pressed', 'true');
+      grid.classList.remove('view--masonry', 'view--contact-sheet', 'view--editorial');
+      grid.classList.add('view--' + saved);
     }
   }
 
@@ -609,7 +646,7 @@
 
     var isZoomed = false;
 
-    lbStage.addEventListener('click', function (e) {
+    lbStage.onclick = function (e) {
       if (e.target.closest('.lb-prev, .lb-next')) return;
       isZoomed = !isZoomed;
       if (isZoomed) {
@@ -620,7 +657,7 @@
         lbStage.classList.remove('is-zoomed');
         lbImg.style.transform = '';
       }
-    });
+    };
 
     function updateLoupe(e) {
       if (!isZoomed) return;
@@ -631,9 +668,9 @@
       lbImg.style.transform = 'scale(2.2)';
     }
 
-    lbStage.addEventListener('mousemove', function (e) {
+    lbStage.onmousemove = function (e) {
       if (isZoomed) updateLoupe(e);
-    });
+    };
 
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && isZoomed) {
@@ -658,49 +695,124 @@
   }
 
   /* -------------------------------------------------------------------
-     13. Seamless Page Transitions for Uninterrupted Background Music
+     13. Global Layout (Header Scroll & Mobile Menu Drawer)
      ------------------------------------------------------------------- */
-  function initSeamlessNavigation() {
-    if (window._seamlessNavInitialized) return;
-    window._seamlessNavInitialized = true;
+  function initGlobalLayout() {
+    if (window._globalLayoutInitialized) return;
+    window._globalLayoutInitialized = true;
 
-    if (window.location.protocol === 'file:') return;
-    if (!window.history || !window.history.pushState || !window.DOMParser) return;
+    var header = document.getElementById('siteHeader');
+    var lastY = window.scrollY;
+    window.addEventListener('scroll', function () {
+      if (!header) return;
+      var currentY = window.scrollY;
+      if (currentY > 40) header.classList.add('is-scrolled');
+      else header.classList.remove('is-scrolled');
+      if (currentY > lastY && currentY > 180) header.classList.add('is-hidden');
+      else header.classList.remove('is-hidden');
+      lastY = currentY;
+    }, { passive: true });
 
-    function isEligible(anchor) {
-      if (!anchor || anchor.tagName !== 'A') return false;
-      var href = anchor.getAttribute('href');
-      if (!href) return false;
-      if (anchor.target && anchor.target !== '_self') return false;
-      if (anchor.hasAttribute('download')) return false;
-      if (href.indexOf(':') !== -1 && href.indexOf('http') !== 0) return false; // mailto, tel, etc.
-      if (href.charAt(0) === '#') return false;
-
-      try {
-        var target = new URL(href, window.location.href);
-        if (target.origin !== window.location.origin) return false;
-
-        // Exclude studio backend, client portal sub-app, and binary downloads
-        var path = target.pathname;
-        if (path.indexOf('/studio/') !== -1 || path.indexOf('/client/') !== -1) return false;
-        if (path.endsWith('.zip') || path.endsWith('.mp3') || path.endsWith('.pdf')) return false;
-
-        return target.href !== window.location.href;
-      } catch (e) {
-        return false;
+    document.addEventListener('click', function (e) {
+      var toggleBtn = e.target.closest('#menuToggle');
+      var closeBtn = e.target.closest('#menuClose');
+      var mobileMenu = document.getElementById('mobileMenu');
+      if (toggleBtn && mobileMenu) {
+        mobileMenu.classList.add('is-open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('no-scroll');
+      } else if (closeBtn && mobileMenu) {
+        mobileMenu.classList.remove('is-open');
+        var toggle = document.getElementById('menuToggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('no-scroll');
       }
+    });
+  }
+
+  /* -------------------------------------------------------------------
+     14. Seamless Zero-Refresh SPA Navigation Engine
+     Provides instant, zero-refresh transitions across all pages on desktop
+     and mobile (http, https, and file protocols), keeping ambient music
+     playing 100% uninterrupted.
+     ------------------------------------------------------------------- */
+  function getPageKey(urlOrHref) {
+    if (!urlOrHref) return 'index.html';
+    var clean = urlOrHref.split('#')[0].split('?')[0];
+    var name = clean.split('/').pop() || 'index.html';
+    if (!name || name === '') name = 'index.html';
+    return name;
+  }
+
+  function updateNavActiveLinks(pageKey) {
+    var navLinks = document.querySelectorAll('.nav a, .mobile-menu nav a');
+    navLinks.forEach(function (a) {
+      var aHref = getPageKey(a.getAttribute('href') || '');
+      if (aHref === pageKey || (pageKey === 'index.html' && (aHref === '' || aHref === 'index.html'))) {
+        a.setAttribute('aria-current', 'page');
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function closeMobileMenu() {
+    var mobileMenu = document.getElementById('mobileMenu');
+    var menuToggle = document.getElementById('menuToggle');
+    if (mobileMenu && mobileMenu.classList.contains('is-open')) {
+      mobileMenu.classList.remove('is-open');
+      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('no-scroll');
+    }
+  }
+
+  function renderView(key, url, push) {
+    var mainEl = document.getElementById('main');
+    if (!mainEl) {
+      window.location.href = url;
+      return;
     }
 
-    function navigateTo(url, push) {
-      var mainEl = document.getElementById('main');
-      if (!mainEl) {
-        window.location.href = url;
-        return;
-      }
-
+    var page = (window.STUDIO_PAGES && window.STUDIO_PAGES[key]) || null;
+    if (page) {
       saveCurrentTimestamp();
       mainEl.style.opacity = '0.35';
-      mainEl.style.transition = 'opacity 0.15s ease';
+      mainEl.style.transition = 'opacity 0.12s ease';
+
+      setTimeout(function () {
+        mainEl.innerHTML = page.html;
+        if (page.title) {
+          document.title = page.title;
+        }
+
+        if (push) {
+          try {
+            window.history.pushState({ pageKey: key, url: url }, page.title || '', url);
+          } catch (e) {
+            // Safe fallback if history.pushState is restricted on file: protocol
+          }
+        }
+
+        updateNavActiveLinks(key);
+        closeMobileMenu();
+        window.scrollTo(0, 0);
+
+        // Re-initialize interactive modules
+        initModules();
+        if (typeof page.init === 'function') {
+          page.init(url);
+        }
+
+        mainEl.style.opacity = '1';
+      }, 120);
+      return;
+    }
+
+    // Dynamic HTTP fetch fallback if page is not bundled in STUDIO_PAGES
+    if (window.location.protocol !== 'file:') {
+      saveCurrentTimestamp();
+      mainEl.style.opacity = '0.35';
+      mainEl.style.transition = 'opacity 0.12s ease';
 
       fetch(url)
         .then(function (res) {
@@ -724,34 +836,17 @@
           mainEl.style.opacity = '1';
 
           if (push) {
-            window.history.pushState({ url: url }, doc.title || '', url);
+            try {
+              window.history.pushState({ pageKey: key, url: url }, doc.title || '', url);
+            } catch (e) {}
           }
 
-          var targetPath = new URL(url, window.location.href).pathname.split('/').pop() || 'index.html';
-          var navLinks = document.querySelectorAll('.nav a, .mobile-menu nav a');
-          navLinks.forEach(function (a) {
-            var aHref = (a.getAttribute('href') || '').split('#')[0].split('?')[0];
-            if (aHref === targetPath || (targetPath === '' && aHref === 'index.html')) {
-              a.setAttribute('aria-current', 'page');
-            } else {
-              a.removeAttribute('aria-current');
-            }
-          });
-
-          var mobileMenu = document.getElementById('mobileMenu');
-          var menuToggle = document.getElementById('menuToggle');
-          if (mobileMenu && mobileMenu.classList.contains('is-open')) {
-            mobileMenu.classList.remove('is-open');
-            if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
-            document.body.classList.remove('no-scroll');
-          }
-
+          updateNavActiveLinks(key);
+          closeMobileMenu();
           window.scrollTo(0, 0);
 
-          // Re-initialize modules on swapped DOM
           initModules();
 
-          // Execute page-specific inline scripts from loaded document
           var scripts = doc.querySelectorAll('body script:not([src])');
           scripts.forEach(function (s) {
             var code = s.textContent.trim();
@@ -768,18 +863,64 @@
         .catch(function () {
           window.location.href = url;
         });
+    } else {
+      window.location.href = url;
+    }
+  }
+
+  function initSeamlessNavigation() {
+    if (window._seamlessNavInitialized) return;
+    window._seamlessNavInitialized = true;
+
+    function isEligible(anchor) {
+      if (!anchor || anchor.tagName !== 'A') return false;
+      var href = anchor.getAttribute('href');
+      if (!href) return false;
+      if (anchor.target && anchor.target !== '_self') return false;
+      if (anchor.hasAttribute('download')) return false;
+      if (href.indexOf(':') !== -1 && href.indexOf('http') !== 0) return false; // mailto, tel, etc.
+      if (href.charAt(0) === '#') return false;
+
+      // Exclude sub-applications (client portal and studio backend)
+      var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
+      if (isClientSubdir) return false;
+      if (href.indexOf('client/') !== -1 || href.indexOf('/client/') !== -1 || href.indexOf('studio/') !== -1 || href.indexOf('/studio/') !== -1) return false;
+
+      var currentKey = getPageKey(window.location.href);
+      var key = getPageKey(href);
+      if (currentKey === key && href.indexOf('?') === -1) {
+        return false; // Already on current page
+      }
+
+      if (window.STUDIO_PAGES && window.STUDIO_PAGES[key]) {
+        return true;
+      }
+
+      try {
+        var target = new URL(href, window.location.href);
+        if (target.origin !== window.location.origin) return false;
+        var path = target.pathname;
+        if (path.indexOf('/studio/') !== -1 || path.indexOf('/client/') !== -1) return false;
+        if (path.endsWith('.zip') || path.endsWith('.mp3') || path.endsWith('.pdf')) return false;
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
 
     document.addEventListener('click', function (e) {
       var anchor = e.target.closest('a');
       if (anchor && isEligible(anchor)) {
         e.preventDefault();
-        navigateTo(anchor.href, true);
+        var href = anchor.getAttribute('href');
+        var key = getPageKey(href);
+        renderView(key, href, true);
       }
     });
 
-    window.addEventListener('popstate', function () {
-      navigateTo(window.location.href, false);
+    window.addEventListener('popstate', function (e) {
+      var key = (e.state && e.state.pageKey) || getPageKey(window.location.href);
+      renderView(key, window.location.href, false);
     });
   }
 
@@ -787,6 +928,7 @@
      DOM Ready Boot
      ------------------------------------------------------------------- */
   function initModules() {
+    initGlobalLayout();
     initStudioClock();
     initSoundToggle();
     initDarkroomToggle();
@@ -805,6 +947,12 @@
     initModules();
     initAmbienceToggle();
     initSeamlessNavigation();
+
+    // Run current page lifecycle controller on initial entry
+    var currentKey = getPageKey(window.location.href);
+    if (window.STUDIO_PAGES && window.STUDIO_PAGES[currentKey] && typeof window.STUDIO_PAGES[currentKey].init === 'function') {
+      window.STUDIO_PAGES[currentKey].init(window.location.href);
+    }
   }
 
   if (document.readyState === 'loading') {
