@@ -198,9 +198,9 @@
     var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
     btns.forEach(function (btn) {
       if (state) {
-        btn.innerHTML = 'Ambience: ON <span class="ambience-wave">♫</span>';
+        btn.textContent = 'Ambience: ON (35%)';
         btn.setAttribute('aria-pressed', 'true');
-        btn.setAttribute('title', 'Background wedding music active (35% volume). Click to pause.');
+        btn.setAttribute('title', 'Background traditional wedding ambience active (35% volume). Click to pause.');
       } else {
         btn.textContent = 'Ambience: OFF';
         btn.setAttribute('aria-pressed', 'false');

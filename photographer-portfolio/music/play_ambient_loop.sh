@@ -26,14 +26,18 @@ echo "Starting ambient wedding music loop in the background..."
 echo "Volume: ~35% (0.35)"
 echo "File: $(basename "$MUSIC_FILE")"
 
-# Background loop
+# Background loop with proper signal propagation
 (
+  trap 'kill $(jobs -p) 2>/dev/null; exit 0' SIGINT SIGTERM
   while true; do
-    afplay -v "$VOLUME" "$MUSIC_FILE"
+    afplay -v "$VOLUME" "$MUSIC_FILE" &
+    CHILD_PID=$!
+    wait "$CHILD_PID" 2>/dev/null
     sleep 1
   done
 ) &
 
 LOOP_PID=$!
 echo "$LOOP_PID" > "$PID_FILE"
-echo "Playback active [PID: $LOOP_PID]. Use stop_ambient.sh or 'killall afplay' to stop."
+echo "Ambient playback active in background (Loop PID: $LOOP_PID, Volume: 35%)."
+echo "To stop anytime, run: ./photographer-portfolio/music/stop_ambient.sh or 'killall afplay'"
