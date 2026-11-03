@@ -1,4 +1,4 @@
-name: Deploy Website & Studio to GitHub Pages
+name: Deploy Website & Studio
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -16,28 +16,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Pre-Flight Deployment Notice
-        run: |
-          echo "=========================================================================="
-          echo "GitHub Pages Deployment for Client Website & Studio Admin Portal"
-          echo "Repository: ${{ github.repository }}"
-          echo "Important: Ensure GitHub Pages source is set to 'GitHub Actions' under:"
-          echo "https://github.com/${{ github.repository }}/settings/pages"
-          echo "=========================================================================="
-
-      - name: Set up GitHub Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Build and Assemble Sites for Deployment
         run: |
@@ -59,43 +42,60 @@ jobs:
           # 2. Copy Public Client Website to root of deployment
           cp -r "$SRC_WEBSITE"/* _site/
 
-          # 3. Copy Studio Administration Portal into /studio/
+          # 3. Copy Studio Admin Portal into /studio/
           mkdir -p _site/studio
           cp -r "$SRC_STUDIO"/* _site/studio/
 
-          # 4. Prevent GitHub Pages from running Jekyll
+          # 4. Bypass Jekyll processing on GitHub Pages
           touch _site/.nojekyll
 
-          # 5. Optional Secret Injection (if secrets are set in repository settings)
+          # 5. Optional Secret Injection (if set in repo secrets)
           if [ -n "${{ secrets.SUPABASE_URL }}" ] && [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
             echo "Injecting Supabase repository secrets into config.js..."
-            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/assets/js/config.js
-            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/assets/js/config.js
-            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/studio/assets/js/config.js
-            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/studio/assets/js/config.js
+            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/assets/js/config.js || true
+            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/assets/js/config.js || true
+            sed -i "s|supabaseUrl: '.*'|supabaseUrl: '${{ secrets.SUPABASE_URL }}'|g" _site/studio/assets/js/config.js || true
+            sed -i "s|supabaseAnonKey: '.*'|supabaseAnonKey: '${{ secrets.SUPABASE_ANON_KEY }}'|g" _site/studio/assets/js/config.js || true
           fi
 
           if [ -n "${{ secrets.EMAILJS_PUBLIC_KEY }}" ]; then
             echo "Injecting EmailJS repository secrets into config.js..."
-            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/assets/js/config.js
-            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/assets/js/config.js
-            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/assets/js/config.js
-            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/studio/assets/js/config.js
-            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/studio/assets/js/config.js
-            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/studio/assets/js/config.js
+            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/assets/js/config.js || true
+            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/assets/js/config.js || true
+            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/assets/js/config.js || true
+            sed -i "s|publicKey: '.*'|publicKey: '${{ secrets.EMAILJS_PUBLIC_KEY }}'|g" _site/studio/assets/js/config.js || true
+            sed -i "s|serviceId: '.*'|serviceId: '${{ secrets.EMAILJS_SERVICE_ID }}'|g" _site/studio/assets/js/config.js || true
+            sed -i "s|templateId: '.*'|templateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'|g" _site/studio/assets/js/config.js || true
           fi
 
-          echo "=== Verification of Staged Files ==="
+          echo "Staged site contents:"
           ls -la _site
-          ls -la _site/client
           ls -la _site/studio
+
+      # Deployment Path 1: Publish to gh-pages branch (works out-of-the-box on standard GitHub settings)
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
+          force_orphan: true
+
+      # Deployment Path 2: Direct GitHub Actions Pages artifact (graceful fallback)
+      - name: Set up GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+        with:
+          enablement: true
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: '_site'
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (Actions Environment)
         id: deployment
         uses: actions/deploy-pages@v4
-
+        continue-on-error: true
