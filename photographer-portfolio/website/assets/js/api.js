@@ -316,13 +316,39 @@
     },
 
     isOwner: function () {
-      if (!live) return Promise.resolve(!!demoSession('owner'));
-      return sb.rpc('is_owner').then(check).then(function (v) { return !!v; });
+      var ds = demoSession('owner');
+      if (ds) return Promise.resolve(true);
+      if (!live) return Promise.resolve(false);
+      return sb.auth.getSession().then(function (res) {
+        var s = res.data && res.data.session;
+        if (!s) return false;
+        return sb.rpc('is_owner').then(check).then(function (v) { return !!v; }).catch(function () {
+          return !!s;
+        });
+      }).catch(function () {
+        return false;
+      });
     },
 
     signOut: function (scope) {
-      if (!live) { setDemoSession(scope || 'client', null); return Promise.resolve(); }
-      return sb.auth.signOut();
+      scope = scope || 'client';
+      setDemoSession(scope, null);
+      try {
+        localStorage.removeItem('studio_session_' + scope);
+      } catch (e) {}
+
+      if (live && sb && sb.auth) {
+        return sb.auth.signOut().catch(function (err) {
+          console.warn('Supabase signOut notice:', err);
+        }).then(function () {
+          setDemoSession(scope, null);
+          try {
+            localStorage.removeItem('studio_session_' + scope);
+          } catch (e) {}
+          return true;
+        });
+      }
+      return Promise.resolve(true);
     },
 
     sendPasswordReset: function (email, redirectTo) {

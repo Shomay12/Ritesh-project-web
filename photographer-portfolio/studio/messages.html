@@ -69,9 +69,17 @@
         if (!isOwner) window.location.href = 'login.html';
       });
 
-      document.getElementById('signOutBtn').addEventListener('click', function() {
-        Api.auth.signOut('owner').then(function() { window.location.href = 'login.html'; });
-      });
+      var signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          signOutBtn.disabled = true;
+          signOutBtn.textContent = 'Signing out...';
+          Api.auth.signOut('owner').finally(function() {
+            window.location.href = 'login.html';
+          });
+        });
+      }
 
       var tbody = document.getElementById('messagesTbody');
       var messages = [];

@@ -39,6 +39,7 @@
         <a href="index.html">&larr; Back to Client Portal</a>
         <a href="../work.html">Portfolio</a>
         <a href="../contact.html">Studio</a>
+        <button type="button" class="btn btn--small" id="gallerySignOutBtn" style="margin-left: 14px; font-size: 11px; padding: 0 12px; min-height: 28px;">Sign Out</button>
       </nav>
       <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
     </div>
@@ -53,6 +54,7 @@
       <a href="index.html">&larr; Back to Client Portal</a>
       <a href="../work.html">Portfolio</a>
       <a href="../contact.html">Studio</a>
+      <button type="button" id="mobileSignOutBtn" style="display: block; width: 100%; text-align: left; padding: 14px 0; color: #cf714c; font: inherit; background: none; border: 0; cursor: pointer;">Sign Out &rarr;</button>
     </nav>
   </div>
 
@@ -507,6 +509,17 @@
 
         updateCounts();
         renderGrid();
+
+        function handleGallerySignOut(e) {
+          if (e) e.preventDefault();
+          Api.auth.signOut('client').finally(function() {
+            window.location.href = 'index.html';
+          });
+        }
+        var gBtn = document.getElementById('gallerySignOutBtn');
+        var mBtn = document.getElementById('mobileSignOutBtn');
+        if (gBtn) gBtn.addEventListener('click', handleGallerySignOut);
+        if (mBtn) mBtn.addEventListener('click', handleGallerySignOut);
       }).catch(function(err) {
         console.error('Gallery loading failed:', err);
         titleEl.textContent = 'Gallery not available';
