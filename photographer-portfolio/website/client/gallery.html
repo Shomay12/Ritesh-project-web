@@ -477,8 +477,17 @@
         ]);
       }).then(function(res) {
         gallery = res[0];
-        photos = res[1];
-        favorites = res[2];
+        photos = res[1] || [];
+        favorites = res[2] || new Set();
+
+        if (!gallery && window.DEMO_STORE) {
+          var demoGals = window.DEMO_STORE.all('galleries');
+          gallery = demoGals.find(function(g) { return g.id === galleryId; }) || demoGals[0];
+          if (gallery) {
+            photos = window.DEMO_STORE.all('gallery_photos').filter(function(p) { return p.gallery_id === gallery.id; });
+            photos.forEach(function(p) { p.thumbUrl = p.thumb_path || p.preview_path; p.previewUrl = p.preview_path || p.original_path; });
+          }
+        }
 
         if (gallery) {
           titleEl.textContent = gallery.title;
