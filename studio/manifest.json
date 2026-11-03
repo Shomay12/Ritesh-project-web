@@ -1,0 +1,70 @@
+{
+  "name": "Ritesh Studio — Photographer Workspace",
+  "short_name": "Studio",
+  "description": "Studio Operations, Bookings, Client Proofing, Uploads & Media Management for Ritesh Farswan",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
+  "background_color": "#141312",
+  "theme_color": "#1b1917",
+  "orientation": "any",
+  "lang": "en",
+  "categories": ["photography", "business", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icons/studio-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Photographs",
+      "short_name": "Upload",
+      "description": "Upload high-res photos to gallery or portfolio",
+      "url": "./index.html#upload",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Client Bookings",
+      "short_name": "Bookings",
+      "description": "View and manage commission inquiries",
+      "url": "./index.html#bookings",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Client Galleries",
+      "short_name": "Galleries",
+      "description": "Manage private client deliverables & PINs",
+      "url": "./index.html#galleries",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Messages & Inquiries",
+      "short_name": "Messages",
+      "description": "Read and respond to client inquiries",
+      "url": "./index.html#messages",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

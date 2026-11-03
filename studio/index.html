@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dashboard &mdash; Ritesh Farswan Studio</title>
+  <meta name="theme-color" content="#1b1917">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ritesh Studio">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/studio-icon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <!-- Studio Header -->
+  <header class="studio-nav">
+    <div class="wrap">
+      <a class="studio-brand" href="index.html">Ritesh Farswan <span>Studio</span></a>
+      <nav class="studio-links" aria-label="Studio navigation">
+        <a href="index.html" aria-current="page">Dashboard</a>
+        <a href="bookings.html">Bookings <span class="studio-nav-badge badge-bookings is-zero">0</span></a>
+        <a href="galleries.html">Client Galleries</a>
+        <a href="upload.html">Upload Center</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="messages.html">Messages <span class="studio-nav-badge badge-messages is-zero">0</span></a>
+      </nav>
+      <div class="studio-right">
+        <div class="studio-search-bar">
+          <svg style="width: 14px; height: 14px; stroke: #8c857b; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="studioQuickSearch" placeholder="Search studio..." autocomplete="off">
+        </div>
+        <button type="button" class="btn-install-app" id="installAppBtn" style="display:none;" title="Install Studio WebApp on phone or desktop">Install App</button>
+        <a href="../developer.html" target="_blank" title="Systems Architect &amp; Engineering by Shomay Singh Parihar">Developer &rarr;</a>
+        <a href="../index.html" target="_blank" title="View live public website"><span class="long-text">View Public Site &rarr;</span><span class="short-text">Site &rarr;</span></a>
+        <button type="button" id="signOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Metrics Strip -->
+  <section class="stats-strip">
+    <div class="stat-box">
+      <div class="stat-lbl">New Enquiries</div>
+      <div class="stat-val" id="statNew">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">Upcoming Sessions</div>
+      <div class="stat-val" id="statUpcoming">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">Unread Messages</div>
+      <div class="stat-val" id="statUnread">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">Active Galleries</div>
+      <div class="stat-val" id="statGalleries">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-lbl">Downloads (30d)</div>
+      <div class="stat-val" id="statDownloads">0</div>
+    </div>
+  </section>
+
+  <main class="wrap" style="padding-bottom: 80px;">
+    <!-- Welcome Header & Quick Actions -->
+    <div class="view-head">
+      <div>
+        <span class="label">Overview</span>
+        <h1>Studio <em>Activity</em></h1>
+      </div>
+      <div class="view-actions">
+        <a class="btn btn--solid" href="upload.html">Upload Photographs &uarr;</a>
+        <a class="btn" href="galleries.html?action=new">+ New Client Gallery</a>
+      </div>
+    </div>
+
+    <!-- Recent Enquiries -->
+    <div style="margin-top: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span class="label">Recent Booking Enquiries</span>
+        <a class="caption" href="bookings.html">View all bookings &rarr;</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Reference</th>
+              <th>Client</th>
+              <th>Commission</th>
+              <th>Date &amp; Venue</th>
+              <th>Quote</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTbody">
+            <tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 30px;">Loading bookings...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Client Downloads Activity -->
+    <div style="margin-top: 56px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span class="label">Recent Client Downloads</span>
+        <span class="caption">Logged from Client Portal</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Gallery</th>
+              <th>Client Email</th>
+              <th>Download Type</th>
+            </tr>
+          </thead>
+          <tbody id="downloadsTbody">
+            <tr><td colspan="4" style="text-align: center; color: var(--muted); padding: 30px;">Loading download logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EmailJS Integration & Live Email Routing Panel -->
+    <div style="margin-top: 56px; border: 1px solid var(--line); background: var(--paper-2); padding: 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <div>
+          <span class="label">Email Delivery Configuration</span>
+          <h2 style="font-size: 20px; font-weight: 400; margin: 4px 0 0;">EmailJS Free Tier &mdash; <span style="font-family: monospace; font-size: 0.9em; color: var(--accent);">photosritesh8@gmail.com</span></h2>
+          <p class="caption" style="margin-top: 4px;">Client inquiries and booking confirmations will be dispatched directly to your Gmail via EmailJS.</p>
+        </div>
+        <div id="emailjsStatusBadge" style="padding: 6px 12px; border-radius: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;">Checking status...</div>
+      </div>
+
+      <form id="emailjsConfigForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Service ID</label>
+          <input type="text" id="cfgEmailServiceId" placeholder="e.g. service_xxxx" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Template ID</label>
+          <input type="text" id="cfgEmailTemplateId" placeholder="e.g. template_xxxx" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Public Key</label>
+          <input type="text" id="cfgEmailPublicKey" placeholder="e.g. user_xxxx or public key" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn btn--solid btn--small" style="white-space: nowrap;">Save EmailJS Keys</button>
+          <button type="button" id="testEmailBtn" class="btn btn--small" style="white-space: nowrap;">Send Test Email &rarr;</button>
+        </div>
+      </form>
+      <div id="emailTestFeedback" style="margin-top: 12px; font-size: 13px; min-height: 18px;"></div>
+    </div>
+
+    <!-- Demo Mode Management Bar -->
+    <div style="margin-top: 60px; padding: 24px; border: 1px solid var(--line); background: var(--paper-2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div style="font-weight: 500; font-size: 14px; color: var(--ink);">Demo Storage Active</div>
+        <div class="caption">To reset demo bookings, sample galleries, and logs back to the default state, click reset.</div>
+      </div>
+      <button type="button" class="btn btn--small" id="resetDemoBtn">Reset Demo Data</button>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    (function() {
+      // Auth Guard
+      Api.auth.isOwner().then(function(isOwner) {
+        if (!isOwner) window.location.href = 'login.html';
+      });
+
+      var signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          signOutBtn.disabled = true;
+          signOutBtn.textContent = 'Signing out...';
+          Api.auth.signOut('owner').finally(function() {
+            window.location.href = 'login.html';
+          });
+        });
+      }
+
+      // Load Metrics
+      Api.studio.stats().then(function(s) {
+        document.getElementById('statNew').textContent = s.newBookings;
+        document.getElementById('statUpcoming').textContent = s.upcoming;
+        document.getElementById('statUnread').textContent = s.unread;
+        document.getElementById('statGalleries').textContent = s.liveGalleries;
+        document.getElementById('statDownloads').textContent = s.downloads30;
+      });
+
+      // Load Recent Bookings
+      var bTbody = document.getElementById('bookingsTbody');
+      Api.studio.bookings().then(function(rows) {
+        bTbody.innerHTML = '';
+        var recent = rows.slice(0, 5);
+        if (!recent.length) {
+          bTbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 30px;">No bookings found.</td></tr>';
+          return;
+        }
+
+        recent.forEach(function(b) {
+          var tr = document.createElement('tr');
+          var badgeClass = 'badge--' + (b.status || 'new');
+          var quoteStr = b.quoted_amount ? Api.format.money(b.quoted_amount) : 'Unquoted';
+
+          tr.innerHTML =
+            '<td data-label="Status"><span class="badge ' + badgeClass + '">' + Api.format.esc(b.status) + '</span></td>' +
+            '<td data-label="Reference"><strong>' + Api.format.esc(b.reference) + '</strong></td>' +
+            '<td data-label="Client"><div class="cell-title">' + Api.format.esc(b.name) + '</div><div class="cell-sub">' + Api.format.esc(b.email) + '</div></td>' +
+            '<td data-label="Commission">' + Api.format.esc(b.session_type) + (b.package ? '<div class="cell-sub">' + Api.format.esc(b.package) + '</div>' : '') + '</td>' +
+            '<td data-label="Date">' + (b.event_date ? Api.format.longDate(b.event_date) : 'Undecided') + '<div class="cell-sub">' + Api.format.esc(b.location || '') + '</div></td>' +
+            '<td data-label="Quote">' + quoteStr + '</td>' +
+            '<td data-label="Action"><a class="btn btn--small" href="bookings.html?id=' + b.id + '">Manage &rarr;</a></td>';
+
+          bTbody.appendChild(tr);
+        });
+      });
+
+      // Load Recent Downloads
+      var dTbody = document.getElementById('downloadsTbody');
+      Api.studio.recentDownloads(6).then(function(rows) {
+        dTbody.innerHTML = '';
+        if (!rows.length) {
+          dTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--muted); padding: 30px;">No download activity recorded yet.</td></tr>';
+          return;
+        }
+
+        rows.forEach(function(d) {
+          var tr = document.createElement('tr');
+          var isZip = d.kind === 'zip';
+          tr.innerHTML =
+            '<td data-label="Time">' + Api.format.relative(d.created_at) + '</td>' +
+            '<td data-label="Gallery"><strong>' + Api.format.esc(d.gallery_title) + '</strong></td>' +
+            '<td data-label="Client">' + Api.format.esc(d.client_email) + '</td>' +
+            '<td data-label="Type">' + (isZip ? '<span class="badge badge--confirmed">Full ZIP Archive</span>' : 'Single Original Photo') + '</td>';
+          dTbody.appendChild(tr);
+        });
+      });
+
+      // Reset Demo Data
+      document.getElementById('resetDemoBtn').addEventListener('click', function() {
+        if (confirm('Reset demo bookings, sample galleries, and messages to original demo defaults?')) {
+          Api.studio.resetDemo();
+          window.location.reload();
+        }
+      });
+
+      // EmailJS configuration & test runner
+      var sBadge = document.getElementById('emailjsStatusBadge');
+      var sService = document.getElementById('cfgEmailServiceId');
+      var sTemplate = document.getElementById('cfgEmailTemplateId');
+      var sPublic = document.getElementById('cfgEmailPublicKey');
+      var fb = document.getElementById('emailTestFeedback');
+
+      function refreshEmailStatus() {
+        var e = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+        sService.value = e.serviceId || '';
+        sTemplate.value = e.templateId || '';
+        sPublic.value = e.publicKey || '';
+        var isConfigured = !!(e.serviceId && e.templateId && e.publicKey);
+        if (isConfigured) {
+          sBadge.textContent = 'Active (Live Sending)';
+          sBadge.style.background = '#e8f5e9';
+          sBadge.style.color = '#2e7d32';
+        } else {
+          sBadge.textContent = 'Demo Mode (Keys Not Set)';
+          sBadge.style.background = '#fff3e0';
+          sBadge.style.color = '#e65100';
+        }
+      }
+      refreshEmailStatus();
+
+      document.getElementById('emailjsConfigForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var keys = {
+          serviceId: sService.value.trim(),
+          templateId: sTemplate.value.trim(),
+          publicKey: sPublic.value.trim()
+        };
+        localStorage.setItem('studio_emailjs_config', JSON.stringify(keys));
+        window.SITE_CONFIG.emailjs = Object.assign({}, window.SITE_CONFIG.emailjs, keys);
+        refreshEmailStatus();
+        fb.style.color = '#2e7d32';
+        fb.textContent = 'EmailJS keys saved successfully in studio preferences.';
+      });
+
+      document.getElementById('testEmailBtn').addEventListener('click', function() {
+        var e = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+        if (!e.serviceId || !e.templateId || !e.publicKey) {
+          fb.style.color = '#e65100';
+          fb.textContent = 'Please enter and save your Service ID, Template ID, and Public Key before running a test.';
+          return;
+        }
+        fb.style.color = 'var(--muted)';
+        fb.textContent = 'Dispatching test email to ' + (SITE_CONFIG.owner.email || 'photosritesh8@gmail.com') + '...';
+        Api.sendEmail({
+          to_email: SITE_CONFIG.owner.email || 'photosritesh8@gmail.com',
+          to_name: SITE_CONFIG.owner.name || 'Ritesh Farswan',
+          subject: 'Studio Verification: EmailJS Connected Successfully',
+          html: '<p>This is a live test notification from your Ritesh Farswan Studio platform verifying that EmailJS is sending directly to photosritesh8@gmail.com.</p>'
+        }).then(function(sent) {
+          if (sent) {
+            fb.style.color = '#2e7d32';
+            fb.textContent = 'Test email dispatched successfully! Please check your inbox at ' + (SITE_CONFIG.owner.email || 'photosritesh8@gmail.com') + '.';
+          } else {
+            fb.style.color = '#c62828';
+            fb.textContent = 'Keys are not set or EmailJS returned false. In demo mode, notifications are saved locally to Studio Outbox.';
+          }
+        }).catch(function(err) {
+          fb.style.color = '#c62828';
+          fb.textContent = 'EmailJS error: ' + (err && (err.text || err.message) ? (err.text || err.message) : JSON.stringify(err));
+        });
+      });
+
+      // Quick Search Filter across dashboard
+      var searchInput = document.getElementById('studioQuickSearch');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          var q = this.value.toLowerCase().trim();
+          var bRows = document.querySelectorAll('#bookingsTbody tr');
+          bRows.forEach(function(tr) {
+            if (tr.cells.length <= 1) return;
+            var text = tr.textContent.toLowerCase();
+            tr.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+          });
+          var dRows = document.querySelectorAll('#downloadsTbody tr');
+          dRows.forEach(function(tr) {
+            if (tr.cells.length <= 1) return;
+            var text = tr.textContent.toLowerCase();
+            tr.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+          });
+        });
+      }
+
+      // Quick Data Refresh
+      var refreshBtn = document.getElementById('refreshDataBtn');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          // Re-fetch metrics
+          Api.studio.stats().then(function(s) {
+            document.getElementById('statNew').textContent = s.newBookings;
+            document.getElementById('statUpcoming').textContent = s.upcoming;
+            document.getElementById('statUnread').textContent = s.unread;
+            document.getElementById('statGalleries').textContent = s.liveGalleries;
+            document.getElementById('statDownloads').textContent = s.downloads30;
+          });
+          if (window.StudioApp && window.StudioApp.toast) {
+            window.StudioApp.toast('Studio data refreshed successfully!', 'success');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- Mobile Native Bottom Navigation Dock -->
+  <nav class="studio-bottom-nav" aria-label="Mobile Studio Navigation">
+    <a href="index.html" class="studio-bottom-item is-active">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Dash</span>
+    </a>
+    <a href="bookings.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Bookings</span>
+      <span class="studio-bottom-badge badge-bookings is-zero">0</span>
+    </a>
+    <a href="galleries.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Galleries</span>
+    </a>
+    <a href="portfolio.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Portfolio</span>
+    </a>
+    <a href="upload.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>Upload</span>
+    </a>
+    <a href="messages.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Inbox</span>
+      <span class="studio-bottom-badge badge-messages is-zero">0</span>
+    </a>
+  </nav>
+
+  <!-- iOS Install Instructions Modal -->
+  <div class="ios-install-modal" id="iosInstallModal" role="dialog" aria-modal="true" aria-label="Install Studio App">
+    <div class="ios-install-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="font: 400 20px/1 var(--serif);">Install Ritesh Studio App</div>
+        <button type="button" class="modal-close" id="iosInstallClose" style="position: static;">Close</button>
+      </div>
+      <p style="font-size: 13.5px; line-height: 1.6; color: #a39c91; margin-bottom: 18px;">
+        Install this webapp on your iPhone or iPad for zero-latency, full-screen offline access:
+      </p>
+      <ol style="font-size: 13px; line-height: 1.8; color: #f7f5f0; padding-left: 20px; margin: 0 0 20px;">
+        <li>Tap the <strong>Share</strong> button <svg style="width: 14px; height: 14px; vertical-align: middle; display: inline;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> at the bottom of Safari.</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+        <li>Tap <strong>Add</strong> in the top right corner.</li>
+      </ol>
+      <div style="font-size: 12px; color: #cf714c;">Launches like a native iOS application directly from your home screen.</div>
+    </div>
+  </div>
+
+  <script src="assets/js/studio-app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client Gallery &mdash; Ritesh Farswan Photography</title>
+  <meta name="description" content="Private collection proofs and high-resolution master downloads.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Private Client Deliverable &middot; Master Resolution Archive</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false" title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false" title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="ambienceToggleBtn" aria-pressed="false" title="Toggle traditional wedding ambient background music (35% volume in loop)">Ambience: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="../index.html">Ritesh Farswan <span>Client Archive</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html">&larr; Back to Client Portal</a>
+        <a href="../work.html">Portfolio</a>
+        <a href="../contact.html">Studio</a>
+        <button type="button" class="btn btn--small" id="gallerySignOutBtn" style="margin-left: 14px; font-size: 11px; padding: 0 12px; min-height: 28px;">Sign Out</button>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="../index.html">Ritesh Farswan</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="index.html">&larr; Back to Client Portal</a>
+      <a href="../work.html">Portfolio</a>
+      <a href="../contact.html">Studio</a>
+      <button type="button" id="mobileSignOutBtn" style="display: block; width: 100%; text-align: left; padding: 14px 0; color: #cf714c; font: inherit; background: none; border: 0; cursor: pointer;">Sign Out &rarr;</button>
+    </nav>
+  </div>
+
+  <main id="main">
+    <!-- Gallery Cover Photo with Framing Marks -->
+    <div class="gallery-cover" id="galleryCoverFrame">
+      <span class="frame-mark mark-tl">+</span>
+      <span class="frame-mark mark-tr">+</span>
+      <span class="frame-mark mark-bl">+</span>
+      <span class="frame-mark mark-br">+</span>
+      <img id="galleryCoverImg" src="" alt="Gallery Cover" style="display: none;">
+    </div>
+
+    <!-- Gallery Header & Details -->
+    <div class="wrap gallery-title">
+      <div>
+        <span class="label" id="galleryClientDate">Client Collection</span>
+        <h1 id="galleryTitle">Riya &amp; Kunal</h1>
+        <div class="caption" id="galleryExpiryNotice" style="margin-top: 10px;"></div>
+      </div>
+      <div>
+        <p class="note" id="galleryNote"></p>
+      </div>
+    </div>
+
+    <!-- Interactive Sticky Toolbar -->
+    <div class="toolbar" id="galleryToolbar">
+      <div class="wrap">
+        <div class="group">
+          <span class="count" id="photoCountDisplay">Loading collection...</span>
+          <button type="button" id="filterAllBtn" aria-pressed="true">All Photographs</button>
+          <button type="button" id="filterFavsBtn" aria-pressed="false">Favorites (<span id="favCount">0</span>)</button>
+        </div>
+
+        <div class="group">
+          <button type="button" id="copyFavsBtn" title="Copy filenames of selected favorites to clipboard">Copy Favorites List</button>
+          <button type="button" class="btn btn--solid" id="downloadZipBtn" style="min-height: 42px; padding: 0 22px;">
+            <span>Download All (ZIP) &darr;</span>
+          </button>
+          <button type="button" class="btn btn--small" id="toolbarSignOutBtn" style="font-size: 11px; padding: 6px 14px; min-height: 32px;">Sign Out</button>
+        </div>
+      </div>
+      <div class="progress" id="zipProgress"><span id="zipProgressBar"></span></div>
+    </div>
+
+    <!-- Proofs Masonry Grid -->
+    <div class="wrap">
+      <div class="proof-grid" id="proofGrid">
+        <!-- Photo cards rendered via JS -->
+      </div>
+    </div>
+
+    <!-- Lightbox Modal with Loupe Zoom -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Proof viewer">
+      <div class="lb-top">
+        <span class="lb-count" id="lbCount">01 / 12</span>
+        <div style="font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #8e877c;">
+          Click image for 2.2&times; loupe inspection
+        </div>
+        <button type="button" id="lbClose">Close [Esc]</button>
+      </div>
+      <div class="lb-stage">
+        <button type="button" class="lb-prev" id="lbPrev" aria-label="Previous">&larr; Previous</button>
+        <img id="lbImg" src="" alt="">
+        <button type="button" class="lb-next" id="lbNext" aria-label="Next">Next &rarr;</button>
+      </div>
+      <div class="lb-bottom">
+        <div class="lb-caption" id="lbCaption">DSC_0001.jpg</div>
+        <div class="lb-actions">
+          <button type="button" class="fav-btn" id="lbFavBtn" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            Favorite
+          </button>
+          <button type="button" id="lbDownloadBtn">Download High-Res &darr;</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-bottom" style="margin-top: 0; padding-top: 0; border: 0;">
+        <div>&copy; Ritesh Farswan Photography &middot; Private Client Archive</div>
+        <div>All rights reserved. For personal and heirloom fine-art printing use.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/demo-store.js"></script>
+  <script src="../assets/js/emails.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/studio-pages.js"></script>
+  <script src="../assets/js/creative-interactions.js"></script>
+  <script>
+    (function() {
+      var toggle = document.getElementById('menuToggle');
+      var close = document.getElementById('menuClose');
+      var menu = document.getElementById('mobileMenu');
+      if (toggle) toggle.addEventListener('click', function() { menu.classList.add('is-open'); });
+      if (close) close.addEventListener('click', function() { menu.classList.remove('is-open'); });
+
+      // Immediate synchronous Sign Out binding
+      function handleGallerySignOut(e) {
+        if (e) e.preventDefault();
+        var btns = document.querySelectorAll('#gallerySignOutBtn, #mobileSignOutBtn, #toolbarSignOutBtn');
+        btns.forEach(function(b) {
+          b.disabled = true;
+          b.textContent = 'Signing out...';
+        });
+        Api.auth.signOut('client').finally(function() {
+          window.location.href = 'index.html';
+        });
+      }
+
+      var gBtn = document.getElementById('gallerySignOutBtn');
+      var mBtn = document.getElementById('mobileSignOutBtn');
+      var tBtn = document.getElementById('toolbarSignOutBtn');
+      if (gBtn) gBtn.addEventListener('click', handleGallerySignOut);
+      if (mBtn) mBtn.addEventListener('click', handleGallerySignOut);
+      if (tBtn) tBtn.addEventListener('click', handleGallerySignOut);
+
+      var params = new URLSearchParams(window.location.search);
+      var galleryId = params.get('id') || 'g1';
+
+      var gallery = null;
+      var photos = [];
+      var favorites = new Set();
+      var activeFilter = 'all';
+      var activeLightboxIdx = 0;
+      var clientEmail = '';
+
+      var coverImg = document.getElementById('galleryCoverImg');
+      var titleEl = document.getElementById('galleryTitle');
+      var dateEl = document.getElementById('galleryClientDate');
+      var noteEl = document.getElementById('galleryNote');
+      var expiryEl = document.getElementById('galleryExpiryNotice');
+      var grid = document.getElementById('proofGrid');
+      var photoCountDisplay = document.getElementById('photoCountDisplay');
+      var favCount = document.getElementById('favCount');
+      var filterAllBtn = document.getElementById('filterAllBtn');
+      var filterFavsBtn = document.getElementById('filterFavsBtn');
+      var copyFavsBtn = document.getElementById('copyFavsBtn');
+      var downloadZipBtn = document.getElementById('downloadZipBtn');
+      var zipProgress = document.getElementById('zipProgress');
+      var zipProgressBar = document.getElementById('zipProgressBar');
+
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lbImg');
+      var lbCaption = document.getElementById('lbCaption');
+      var lbCount = document.getElementById('lbCount');
+      var lbClose = document.getElementById('lbClose');
+      var lbPrev = document.getElementById('lbPrev');
+      var lbNext = document.getElementById('lbNext');
+      var lbFavBtn = document.getElementById('lbFavBtn');
+      var lbDownloadBtn = document.getElementById('lbDownloadBtn');
+
+      function visiblePhotos() {
+        if (activeFilter === 'favs') {
+          return photos.filter(function(p) { return favorites.has(p.id); });
+        }
+        return photos;
+      }
+
+      function updateCounts() {
+        favCount.textContent = favorites.size;
+        photoCountDisplay.textContent = photos.length + ' Photograph' + (photos.length === 1 ? '' : 's');
+      }
+
+      function renderGrid() {
+        var list = visiblePhotos();
+        grid.innerHTML = '';
+
+        if (!list.length) {
+          grid.innerHTML = '<div class="empty-note">' +
+            (activeFilter === 'favs' ? 'No favorites marked yet. Click the heart icon on any photo to add it to your selection.' : 'No photos found in this gallery.') +
+            '</div>';
+          return;
+        }
+
+        list.forEach(function(photo, idx) {
+          var el = document.createElement('div');
+          el.className = 'proof curtain is-in tilt-frame';
+          var isFav = favorites.has(photo.id);
+          var sizeStr = photo.size_bytes ? Api.format.bytes(photo.size_bytes) : '';
+
+          el.innerHTML =
+            '<div class="frame">' +
+              '<span class="frame-mark mark-tl">+</span>' +
+              '<img src="' + Api.format.esc(photo.thumbUrl || photo.thumb_path || photo.preview_path) + '" alt="' + Api.format.esc(photo.filename) + '" loading="lazy">' +
+            '</div>' +
+            '<div class="proof-meta">' +
+              '<div class="fname">' + Api.format.esc(photo.filename) + (sizeStr ? ' &middot; ' + sizeStr : '') + '</div>' +
+              '<div class="actions">' +
+                '<button type="button" class="fav-btn" data-id="' + photo.id + '" aria-pressed="' + isFav + '" title="Mark favorite">' +
+                  '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+                '</button>' +
+                '<button type="button" class="dl-btn" data-id="' + photo.id + '" title="Download full-resolution photograph">Download</button>' +
+              '</div>' +
+            '</div>';
+
+          var img = el.querySelector('img');
+          img.onload = function() { img.classList.add('is-loaded'); };
+          if (img.complete) img.classList.add('is-loaded');
+
+          el.querySelector('.frame').addEventListener('click', function() {
+            openLightbox(idx);
+          });
+
+          el.querySelector('.fav-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleFavorite(photo.id);
+          });
+
+          el.querySelector('.dl-btn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            downloadSingle(photo);
+          });
+
+          grid.appendChild(el);
+        });
+      }
+
+      function toggleFavorite(photoId) {
+        var on = !favorites.has(photoId);
+        if (on) favorites.add(photoId);
+        else favorites.delete(photoId);
+
+        updateCounts();
+        renderGrid();
+
+        Api.portal.setFavorite(galleryId, photoId, on, clientEmail).catch(function(e) {
+          console.warn('Favorite sync warning:', e);
+        });
+      }
+
+      function downloadSingle(photo) {
+        Api.portal.logDownload(galleryId, photo.id, 'single', clientEmail);
+        Api.portal.downloadUrl(photo).then(function(url) {
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = photo.filename;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }).catch(function() {
+          Api.portal.originalBlob(photo).then(function(blob) {
+            if (window.saveAs) {
+              window.saveAs(blob, photo.filename);
+            } else {
+              var obj = URL.createObjectURL(blob);
+              var a = document.createElement('a');
+              a.href = obj;
+              a.download = photo.filename;
+              a.click();
+              URL.revokeObjectURL(obj);
+            }
+          }).catch(function(ex) {
+            alert('Download failed: ' + (ex.message || ex));
+          });
+        });
+      }
+
+      function openLightbox(idx) {
+        var list = visiblePhotos();
+        if (!list[idx]) return;
+        activeLightboxIdx = idx;
+        var p = list[idx];
+
+        lbImg.classList.remove('is-loaded');
+        Api.portal.previewUrl(p).then(function(u) {
+          lbImg.src = u;
+          lbImg.onload = function() { lbImg.classList.add('is-loaded'); };
+        });
+
+        lbCaption.innerHTML = Api.format.esc(p.filename) +
+          (p.width && p.height ? ' &middot; <span>' + p.width + ' &times; ' + p.height + ' px</span>' : '') +
+          (p.size_bytes ? ' &middot; <span>' + Api.format.bytes(p.size_bytes) + '</span>' : '');
+
+        lbCount.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(list.length).padStart(2, '0');
+        lbFavBtn.setAttribute('aria-pressed', favorites.has(p.id));
+
+        lb.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+      }
+
+      function closeLightbox() {
+        lb.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+        var stage = document.querySelector('.lb-stage');
+        if (stage) stage.classList.remove('is-zoomed');
+        if (lbImg) lbImg.style.transform = '';
+      }
+
+      function nextPhoto() {
+        var list = visiblePhotos();
+        if (!list.length) return;
+        activeLightboxIdx = (activeLightboxIdx + 1) % list.length;
+        openLightbox(activeLightboxIdx);
+      }
+
+      function prevPhoto() {
+        var list = visiblePhotos();
+        if (!list.length) return;
+        activeLightboxIdx = (activeLightboxIdx - 1 + list.length) % list.length;
+        openLightbox(activeLightboxIdx);
+      }
+
+      filterAllBtn.addEventListener('click', function() {
+        activeFilter = 'all';
+        filterAllBtn.setAttribute('aria-pressed', 'true');
+        filterFavsBtn.setAttribute('aria-pressed', 'false');
+        renderGrid();
+      });
+
+      filterFavsBtn.addEventListener('click', function() {
+        activeFilter = 'favs';
+        filterAllBtn.setAttribute('aria-pressed', 'false');
+        filterFavsBtn.setAttribute('aria-pressed', 'true');
+        renderGrid();
+      });
+
+      copyFavsBtn.addEventListener('click', function() {
+        var favPhotos = photos.filter(function(p) { return favorites.has(p.id); });
+        if (!favPhotos.length) {
+          alert('No favorites selected yet. Heart a few photos first!');
+          return;
+        }
+        var filenames = favPhotos.map(function(p) { return p.filename; }).join(', ');
+        navigator.clipboard.writeText(filenames).then(function() {
+          var orig = copyFavsBtn.textContent;
+          copyFavsBtn.textContent = 'Copied to Clipboard!';
+          setTimeout(function() { copyFavsBtn.textContent = orig; }, 2500);
+        }).catch(function() {
+          prompt('Copy your favorite filenames:', filenames);
+        });
+      });
+
+      downloadZipBtn.addEventListener('click', function() {
+        if (!window.JSZip) {
+          alert('JSZip library is loading. Please try again in a moment.');
+          return;
+        }
+
+        downloadZipBtn.disabled = true;
+        downloadZipBtn.querySelector('span').textContent = 'Preparing ZIP Archive...';
+        zipProgressBar.style.width = '5%';
+
+        var zip = new window.JSZip();
+        var folder = zip.folder((gallery ? gallery.title : 'Gallery') + ' - Master Files');
+        var loadedCount = 0;
+        var total = photos.length;
+
+        Api.portal.logDownload(galleryId, null, 'zip', clientEmail);
+
+        var promises = photos.map(function(photo) {
+          return Api.portal.originalBlob(photo).then(function(blob) {
+            folder.file(photo.filename, blob);
+            loadedCount++;
+            var pct = Math.round((loadedCount / total) * 85);
+            zipProgressBar.style.width = pct + '%';
+            downloadZipBtn.querySelector('span').textContent = 'Packaging ' + loadedCount + ' of ' + total + '...';
+          }).catch(function(err) {
+            console.warn('Failed bundling photo ' + photo.filename, err);
+          });
+        });
+
+        Promise.all(promises).then(function() {
+          downloadZipBtn.querySelector('span').textContent = 'Compressing archive...';
+          zipProgressBar.style.width = '90%';
+
+          return zip.generateAsync({ type: 'blob' }, function(meta) {
+            var pct = 90 + Math.round(meta.percent * 0.1);
+            zipProgressBar.style.width = pct + '%';
+          });
+        }).then(function(content) {
+          var zipName = (gallery ? gallery.title.replace(/[^\w\-]+/g, '_') : 'Collection') + '_Masters.zip';
+          if (window.saveAs) {
+            window.saveAs(content, zipName);
+          } else {
+            var url = URL.createObjectURL(content);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = zipName;
+            a.click();
+            URL.revokeObjectURL(url);
+          }
+
+          downloadZipBtn.disabled = false;
+          downloadZipBtn.querySelector('span').textContent = 'Download Complete \u2713';
+          zipProgressBar.style.width = '100%';
+          setTimeout(function() {
+            downloadZipBtn.querySelector('span').textContent = 'Download All (ZIP) \u2193';
+            zipProgressBar.style.width = '0%';
+          }, 4000);
+        }).catch(function(err) {
+          console.error('ZIP generation error:', err);
+          alert('Could not complete ZIP archive: ' + err.message);
+          downloadZipBtn.disabled = false;
+          downloadZipBtn.querySelector('span').textContent = 'Download All (ZIP) \u2193';
+          zipProgressBar.style.width = '0%';
+        });
+      });
+
+      if (lbClose) lbClose.addEventListener('click', closeLightbox);
+      if (lbNext) lbNext.addEventListener('click', nextPhoto);
+      if (lbPrev) lbPrev.addEventListener('click', prevPhoto);
+      if (lbFavBtn) {
+        lbFavBtn.addEventListener('click', function() {
+          var list = visiblePhotos();
+          if (list[activeLightboxIdx]) {
+            toggleFavorite(list[activeLightboxIdx].id);
+            lbFavBtn.setAttribute('aria-pressed', favorites.has(list[activeLightboxIdx].id));
+          }
+        });
+      }
+      if (lbDownloadBtn) {
+        lbDownloadBtn.addEventListener('click', function() {
+          var list = visiblePhotos();
+          if (list[activeLightboxIdx]) {
+            downloadSingle(list[activeLightboxIdx]);
+          }
+        });
+      }
+
+      window.addEventListener('keydown', function(e) {
+        if (!lb.classList.contains('is-open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'ArrowLeft') prevPhoto();
+      });
+
+      Api.auth.user('client').then(function(u) {
+        clientEmail = (u && u.email) || 'client@example.com';
+        return Promise.all([
+          Api.portal.gallery(galleryId),
+          Api.portal.photos(galleryId),
+          Api.portal.favorites(galleryId, clientEmail)
+        ]);
+      }).then(function(res) {
+        gallery = res[0];
+        photos = res[1] || [];
+        favorites = res[2] || new Set();
+
+        if (!gallery && window.DEMO_STORE) {
+          var demoGals = window.DEMO_STORE.all('galleries');
+          gallery = demoGals.find(function(g) { return g.id === galleryId; }) || demoGals[0];
+          if (gallery) {
+            photos = window.DEMO_STORE.all('gallery_photos').filter(function(p) { return p.gallery_id === gallery.id; });
+            photos.forEach(function(p) { p.thumbUrl = p.thumb_path || p.preview_path; p.previewUrl = p.preview_path || p.original_path; });
+          }
+        }
+
+        if (gallery) {
+          titleEl.textContent = gallery.title;
+          dateEl.textContent = (gallery.client_name || 'Client Archive') + (gallery.event_date ? ' &middot; ' + Api.format.longDate(gallery.event_date) : '');
+          if (gallery.note) noteEl.textContent = gallery.note;
+
+          if (gallery.expires_at) {
+            expiryEl.textContent = 'Active until ' + Api.format.longDate(gallery.expires_at.slice(0, 10)) + ' &middot; Please download your full archive before expiry.';
+          }
+
+          var coverPhoto = photos.find(function(p) { return p.id === gallery.cover_photo_id; }) || photos[0];
+          if (coverPhoto) {
+            coverImg.src = coverPhoto.previewUrl || coverPhoto.preview_path || coverPhoto.original_path;
+            coverImg.style.display = 'block';
+          }
+        }
+
+        updateCounts();
+        renderGrid();
+      }).catch(function(err) {
+        console.error('Gallery loading failed:', err);
+        titleEl.textContent = 'Gallery not available';
+        noteEl.textContent = 'The requested private collection could not be loaded or has expired.';
+      });
+    })();
+  </script>
+  <!-- Background Ambient Audio (Traditional Wedding Suite) -->
+  <audio id="studioAmbientAudio" preload="auto" loop style="display:none;">
+    <source src="../assets/audio/wedding-ambience.mp3" type="audio/mpeg">
+    <source src="../../music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3" type="audio/mpeg">
+  </audio>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact &mdash; Ritesh Farswan Photography</title>
+  <meta name="description" content="Direct correspondence with Ritesh Farswan's studio in Mumbai.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Studio Correspondence &middot; Bandra West, Mumbai</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false" title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false" title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="ambienceToggleBtn" aria-pressed="false" title="Toggle traditional wedding ambient background music (35% volume in loop)">Ambience: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="index.html">Ritesh Farswan <span>Photography</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="work.html">Selected Work</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services &amp; Investment</a>
+        <a href="booking.html">Check Dates &amp; Book</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+        <a href="developer.html">Developer</a>
+        <a class="nav-client" href="client/index.html">Client Portal &rarr;</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="index.html">Ritesh Farswan</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="work.html">Selected Work</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services &amp; Investment</a>
+      <a href="booking.html">Check Dates &amp; Book</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+      <a href="developer.html">Developer</a>
+      <a href="client/index.html">Client Portal</a>
+    </nav>
+    <div class="mobile-menu-foot">
+      <p style="margin-bottom: 12px;">
+        <button type="button" class="ticker-btn" id="mobileAmbienceBtn" style="font-size: 13px; color: #cf714c;">Ambient Music: OFF</button>
+      </p>
+      <p>Mumbai &middot; Available worldwide</p>
+      <p>photosritesh8@gmail.com</p>
+    </div>
+  </div>
+
+  <main id="main">
+    <div class="wrap page-head">
+      <span class="label">Inquiries &amp; Studio</span>
+      <h1>Direct <em>Correspondence</em></h1>
+      <p class="lede">
+        For general queries, commercial commissions, print licensing, or press inquiries, write directly below. For wedding bookings, please use the <a class="text-link" href="booking.html">calendar reservation form</a>.
+      </p>
+    </div>
+
+    <div class="wrap section--tight">
+      <div class="contact-grid">
+        <div class="contact-details">
+          <span class="label">Studio Information</span>
+          <dl>
+            <dt class="label">Location</dt>
+            <dd>Bandra West<br>Mumbai, Maharashtra 400050<br><span class="caption">By appointment only &middot; 18.9220&deg; N, 72.8347&deg; E</span></dd>
+
+            <dt class="label">Electronic Mail</dt>
+            <dd><a class="text-link" href="mailto:photosritesh8@gmail.com">photosritesh8@gmail.com</a></dd>
+
+            <dt class="label">Telephone &amp; WhatsApp</dt>
+            <dd><a class="text-link" href="tel:+919820041736">+91 98200 41736</a></dd>
+
+            <dt class="label">Social &amp; Dispatches</dt>
+            <dd><a class="text-link" href="https://instagram.com/riteshfarswan.photo" target="_blank" rel="noopener">@riteshfarswan.photo</a></dd>
+          </dl>
+        </div>
+
+        <div>
+          <form id="contactForm" novalidate>
+            <div class="hp">
+              <label for="company_name">Leave empty</label>
+              <input type="text" id="company_name" name="company_name" tabindex="-1">
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="contact_name">Your Name *</label>
+                <input type="text" id="contact_name" name="name" placeholder="Full name" required>
+                <span class="error" id="err-cname"></span>
+              </div>
+
+              <div class="field">
+                <label for="contact_email">Email Address *</label>
+                <input type="email" id="contact_email" name="email" placeholder="you@domain.com" required>
+                <span class="error" id="err-cemail"></span>
+              </div>
+
+              <div class="field full">
+                <label for="contact_subject">Subject</label>
+                <input type="text" id="contact_subject" name="subject" placeholder="e.g. Commercial lookbook inquiry / Print reprint">
+              </div>
+
+              <div class="field full">
+                <label for="contact_message">Message *</label>
+                <textarea id="contact_message" name="message" placeholder="Write your message here..." required></textarea>
+                <span class="error" id="err-cmessage"></span>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 36px;">
+              <button type="submit" class="btn btn--solid" id="contactSubmitBtn">
+                <span>Send Message &rarr;</span>
+              </button>
+              <div id="contactStatus" class="form-status"></div>
+            </div>
+          </form>
+
+          <div id="contactSuccess" class="thanks">
+            <span class="label">Sent</span>
+            <h2>Thank you for your message.</h2>
+            <p>
+              I read every message directly and will respond to your email address shortly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <h2>Ritesh Farswan <br><a href="booking.html">Inquire for 2025&ndash;2026</a></h2>
+        </div>
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="work.html">Portfolio</a></li>
+            <li><a href="about.html">About Ritesh</a></li>
+            <li><a href="services.html">Services &amp; Pricing</a></li>
+            <li><a href="booking.html">Check Availability</a></li>
+            <li><a href="contact.html">General Contact</a></li>
+            <li><a href="developer.html">Developer &amp; Systems</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Client Access</h4>
+          <ul>
+            <li><a href="client/index.html">Client Portal</a></li>
+            <li><a href="client/index.html">Download High-Res</a></li>
+            <li><a href="client/index.html">Select Favorites</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li>Bandra West, Mumbai</li>
+            <li>+91 98200 41736</li>
+            <li>photosritesh8@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; Ritesh Farswan Photography. All rights reserved. &middot; Engineered by <a href="developer.html" style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Shomay Singh Parihar</a></div>
+        <div>Archival Documentary &amp; Portrait Photography &middot; Mumbai &middot; Worldwide</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/studio-pages.js"></script>
+  <script src="assets/js/creative-interactions.js"></script>
+  <script>
+    (function() {
+      var toggle = document.getElementById('menuToggle');
+      var close = document.getElementById('menuClose');
+      var menu = document.getElementById('mobileMenu');
+      if (toggle) toggle.addEventListener('click', function() { menu.classList.add('is-open'); });
+      if (close) close.addEventListener('click', function() { menu.classList.remove('is-open'); });
+
+      var form = document.getElementById('contactForm');
+      var btn = document.getElementById('contactSubmitBtn');
+      var status = document.getElementById('contactStatus');
+      var success = document.getElementById('contactSuccess');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (document.getElementById('company_name').value) return;
+
+        var nameEl = document.getElementById('contact_name');
+        var emailEl = document.getElementById('contact_email');
+        var msgEl = document.getElementById('contact_message');
+
+        var err = false;
+        if (!nameEl.value.trim()) { document.getElementById('err-cname').textContent = 'Name is required.'; err = true; }
+        else document.getElementById('err-cname').textContent = '';
+
+        if (!emailEl.value.trim()) { document.getElementById('err-cemail').textContent = 'Email is required.'; err = true; }
+        else document.getElementById('err-cemail').textContent = '';
+
+        if (!msgEl.value.trim()) { document.getElementById('err-cmessage').textContent = 'Message is required.'; err = true; }
+        else document.getElementById('err-cmessage').textContent = '';
+
+        if (err) return;
+
+        btn.disabled = true;
+        btn.querySelector('span').textContent = 'Sending...';
+        status.textContent = '';
+
+        Api.createMessage({
+          name: nameEl.value.trim(),
+          email: emailEl.value.trim(),
+          subject: document.getElementById('contact_subject').value.trim(),
+          message: msgEl.value.trim()
+        }).then(function() {
+          form.style.display = 'none';
+          success.classList.add('is-shown');
+        }).catch(function(ex) {
+          console.error(ex);
+          btn.disabled = false;
+          btn.querySelector('span').textContent = 'Send Message \u2192';
+          status.textContent = 'Could not send message. Please write directly to photosritesh8@gmail.com.';
+        });
+      });
+    })();
+  </script>
+  <!-- Background Ambient Audio (Traditional Wedding Suite) -->
+  <audio id="studioAmbientAudio" preload="auto" loop style="display:none;">
+    <source src="assets/audio/wedding-ambience.mp3" type="audio/mpeg">
+    <source src="../music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3" type="audio/mpeg">
+  </audio>
+</body>
+</html>

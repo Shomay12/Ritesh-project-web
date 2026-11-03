@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Developer &amp; Systems &mdash; Shomay Singh Parihar</title>
+  <meta name="description"
+    content="Developer &amp; Platform Architect behind Ritesh Farswan Photography: Shomay Singh Parihar (@Shomay12).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Systems Architecture &middot; Noida / Mumbai &middot; GitHub: @Shomay12</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false"
+          title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false"
+          title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="ambienceToggleBtn" aria-pressed="false"
+          title="Toggle traditional wedding ambient background music (35% volume in loop)">Ambience: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="index.html">Ritesh Farswan <span>Photography</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="work.html">Selected Work</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services &amp; Investment</a>
+        <a href="booking.html">Check Dates &amp; Book</a>
+        <a href="contact.html">Contact</a>
+        <a href="developer.html" aria-current="page">Developer</a>
+        <a class="nav-client" href="client/index.html">Client Portal &rarr;</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false"
+        aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="index.html">Ritesh Farswan</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="work.html">Selected Work</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services &amp; Investment</a>
+      <a href="booking.html">Check Dates &amp; Book</a>
+      <a href="contact.html">Contact</a>
+      <a href="developer.html" aria-current="page">Developer</a>
+      <a href="client/index.html">Client Portal</a>
+    </nav>
+    <div class="mobile-menu-foot">
+      <p style="margin-bottom: 12px;">
+        <button type="button" class="ticker-btn" id="mobileAmbienceBtn" style="font-size: 13px; color: #cf714c;">Ambient
+          Music: OFF</button>
+      </p>
+      <p>Engineered by Shomay Singh Parihar &middot; Noida, India</p>
+      <p><a href="https://github.com/Shomay12" target="_blank" rel="noopener">github.com/shomay12</a></p>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- Hero / Page Head -->
+    <div class="wrap page-head dev-hero">
+
+      <h1>Shomay Singh <em>Parihar</em></h1>
+      <p class="lede">
+        &ldquo;Doing what I love. Accidentally taking it way too far.&rdquo;
+      </p>
+      <div style="margin-top: 18px;">
+        <span class="exif-tag">
+          ARCHITECT &amp; DEVELOPER &middot; NOIDA, INDIA &middot; GITHUB.COM/SHOMAY12
+        </span>
+      </div>
+    </div>
+
+    <!-- Section 1: About Myself -->
+    <section class="wrap section--tight">
+      <div class="dev-profile-wrap">
+        <!-- Left: Avatar Frame -->
+        <div class="portrait">
+          <div class="dev-avatar-box tilt-frame">
+            <span class="frame-mark mark-tl">+</span>
+            <span class="frame-mark mark-tr">+</span>
+            <span class="frame-mark mark-bl">+</span>
+            <span class="frame-mark mark-br">+</span>
+            <img class="dev-avatar-img" src="https://avatars.githubusercontent.com/u/200135348?v=4"
+              alt="Shomay Singh Parihar &mdash; Developer &amp; Systems Architect" width="600" height="600">
+          </div>
+          <figcaption style="margin-top: 14px;">
+            <span class="exif-tag">Shomay Singh Parihar &middot; @Shomay12 &middot; Noida, India</span>
+          </figcaption>
+        </div>
+
+        <!-- Right: Biography & Mindset -->
+        <div class="about-text">
+          <span class="label">Section 01</span>
+          <h2 style="font-size: clamp(34px, 4vw, 54px); margin: 6px 0 24px;">About Myself</h2>
+          <p>
+            I am Shomay Singh Parihar, an AI Engineer, Data Scientist, and Systems Developer based in Noida, India. I am
+            driven by first-principles problem solving—breaking complex computational and design challenges down to
+            their fundamental axioms and constructing resilient, elegant solutions from the ground up.
+          </p>
+          <p>
+            My work spans machine learning research, distributed backend architecture, and building refined digital
+            experiences that feel tangible, responsive, and alive. I believe software engineering is at its highest form
+            when it bridges deep technical rigor with human sensibility—creating tools and interfaces that respect
+            craft, nuance, and user focus.
+          </p>
+          <p>
+            Whether architecting machine intelligence or engineering bespoke creative platforms, I pursue continuous
+            mastery: diagnosing failure modes, optimizing for performance, and executing with obsessive care.
+          </p>
+
+          <div class="signature" style="margin-top: 36px;">Shomay Singh Parihar</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: About This Project -->
+    <section class="section section--tint">
+      <div class="wrap">
+        <div class="section-head" style="margin-bottom: 32px;">
+          <div>
+            <span class="label">Section 02</span>
+            <h2 style="font-size: clamp(34px, 4.5vw, 64px); margin-top: 8px;">About This <em>Project</em></h2>
+          </div>
+          <span class="exif-tag">Ritesh Farswan Photography &middot; Digital Platform</span>
+        </div>
+
+        <div class="about-text" style="max-width: 920px;">
+          <p>
+            When architecting the digital monograph and studio operating suite for <em>Ritesh Farswan Photography</em>,
+            the objective was uncompromising: reject contemporary AI template uniformity and build an authentic tribute
+            to the tactile heritage of medium format 35mm film photography.
+          </p>
+          <p>
+            Every dimension of this platform was engineered to reflect the precision of an analog darkroom:
+          </p>
+          <ul class="plain-list" style="margin: 32px 0;">
+            <li>
+              <strong>Acoustic Leaf Shutter Feedback</strong>
+              <span>Synthesizing mechanical leaf shutter clicks directly in the browser via the Web Audio API without
+                audio file latency.</span>
+            </li>
+            <li>
+              <strong>Continuous Ambient Acoustic Suite</strong>
+              <span>Traditional wedding background soundscape playing continuously across page transitions with state
+                persistence.</span>
+            </li>
+            <li>
+              <strong>Analog Safelight Darkroom Mode</strong>
+              <span>Instant amber safelight palette transformation with zero reflow, simulating physical darkroom paper
+                development.</span>
+            </li>
+            <li>
+              <strong>Private Client Proofing &amp; Archival</strong>
+              <span>Secured tokenized client portal with favorites marking, feedback notes, and ZIP master deliverable
+                downloads backed by Supabase.</span>
+            </li>
+            <li>
+              <strong>Studio Backoffice Suite</strong>
+              <span>Full administrative control panel for date availability, gallery management, photo upload pipelines,
+                and automated transactional emails.</span>
+            </li>
+          </ul>
+          <p>
+            The result is a unified platform where fine-art documentary photography and high-performance software
+            engineering exist in total harmony.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Communication -->
+    <section class="section wrap">
+      <div class="section-head" style="margin-bottom: 12px;">
+        <div>
+          <span class="label">Section 03</span>
+          <h2 style="font-size: clamp(34px, 4.5vw, 64px); margin-top: 8px;">Communication</h2>
+        </div>
+        <span class="exif-tag">Connect &middot; Direct Channels</span>
+      </div>
+      <p style="max-width: 60ch; font-size: 17px; color: var(--muted); margin-bottom: 28px;">
+        For direct technical correspondence, engineering inquiries, or to connect across my primary verified channels:
+      </p>
+
+      <div class="dev-comm-grid">
+        <!-- 1. X / Twitter -->
+        <a class="dev-comm-card" href="https://x.com/KJshomayyy" target="_blank" rel="noopener">
+          <div class="comm-meta">
+            <span class="comm-label">X / Twitter</span>
+            <span class="comm-value">@KJshomayyy</span>
+          </div>
+          <span class="comm-arrow">&rarr;</span>
+        </a>
+
+        <!-- 2. Personal Website -->
+        <a class="dev-comm-card" href="https://shomaysinghparihar.online" target="_blank" rel="noopener">
+          <div class="comm-meta">
+            <span class="comm-label">Personal Website</span>
+            <span class="comm-value">shomaysinghparihar.online</span>
+          </div>
+          <span class="comm-arrow">&rarr;</span>
+        </a>
+
+        <!-- 3. GitHub -->
+        <a class="dev-comm-card" href="https://github.com/Shomay12" target="_blank" rel="noopener">
+          <div class="comm-meta">
+            <span class="comm-label">GitHub</span>
+            <span class="comm-value">github.com/Shomay12</span>
+          </div>
+          <span class="comm-arrow">&rarr;</span>
+        </a>
+
+        <!-- 4. Direct Mail -->
+        <a class="dev-comm-card" href="mailto:shomaysinghparihar@gmail.com">
+          <div class="comm-meta">
+            <span class="comm-label">Direct Mail</span>
+            <span class="comm-value">shomaysinghparihar@gmail.com</span>
+          </div>
+          <span class="comm-arrow">&rarr;</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <h2>Ritesh Farswan <br><a href="booking.html">Inquire for 2025&ndash;2026</a></h2>
+        </div>
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="work.html">Portfolio</a></li>
+            <li><a href="about.html">About Ritesh</a></li>
+            <li><a href="services.html">Services &amp; Pricing</a></li>
+            <li><a href="booking.html">Check Availability</a></li>
+            <li><a href="contact.html">General Contact</a></li>
+            <li><a href="developer.html">Developer &amp; Systems</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Client Access</h4>
+          <ul>
+            <li><a href="client/index.html">Client Portal</a></li>
+            <li><a href="client/index.html">Download High-Res</a></li>
+            <li><a href="client/index.html">Select Favorites</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li>Bandra West, Mumbai</li>
+            <li>+91 98200 41736</li>
+            <li>photosritesh8@gmail.com</li>
+            <li><a href="studio/index.html" class="studio-admin-link" style="color: #6a645b;">Studio Admin &rarr;</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; Ritesh Farswan Photography. All rights reserved. &middot; Engineered by <a href="developer.html"
+            style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Shomay Singh Parihar</a>
+        </div>
+        <div>Archival Documentary &amp; Portrait Photography &middot; Mumbai &middot; Worldwide</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/studio-pages.js"></script>
+  <script src="assets/js/creative-interactions.js"></script>
+  <script>
+    (function () {
+      // Header scroll state
+      var header = document.getElementById('siteHeader');
+      var lastY = window.scrollY;
+      window.addEventListener('scroll', function () {
+        var currentY = window.scrollY;
+        if (currentY > 40) header.classList.add('is-scrolled');
+        else header.classList.remove('is-scrolled');
+        if (currentY > lastY && currentY > 180) header.classList.add('is-hidden');
+        else header.classList.remove('is-hidden');
+        lastY = currentY;
+      }, { passive: true });
+
+      // Mobile menu
+      var toggle = document.getElementById('menuToggle');
+      var close = document.getElementById('menuClose');
+      var menu = document.getElementById('mobileMenu');
+      if (toggle) toggle.addEventListener('click', function () { menu.classList.add('is-open'); });
+      if (close) close.addEventListener('click', function () { menu.classList.remove('is-open'); });
+    })();
+  </script>
+  <!-- Background Ambient Audio (Traditional Wedding Suite) -->
+  <audio id="studioAmbientAudio" preload="auto" loop style="display:none;">
+    <source src="assets/audio/wedding-ambience.mp3" type="audio/mpeg">
+    <source
+      src="../music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3"
+      type="audio/mpeg">
+  </audio>
+</body>
+
+</html>

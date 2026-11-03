@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Manage Bookings &mdash; Ritesh Farswan Studio</title>
+  <meta name="theme-color" content="#1b1917">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ritesh Studio">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/studio-icon.svg">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <header class="studio-nav">
+    <div class="wrap">
+      <a class="studio-brand" href="index.html">Ritesh Farswan <span>Studio</span></a>
+      <nav class="studio-links" aria-label="Studio navigation">
+        <a href="index.html">Dashboard</a>
+        <a href="bookings.html" aria-current="page">Bookings <span class="studio-nav-badge badge-bookings is-zero">0</span></a>
+        <a href="galleries.html">Client Galleries</a>
+        <a href="upload.html">Upload Center</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="messages.html">Messages <span class="studio-nav-badge badge-messages is-zero">0</span></a>
+      </nav>
+      <div class="studio-right">
+        <button type="button" class="btn-install-app" id="installAppBtn" style="display:none;" title="Install Studio WebApp on phone or desktop">Install App</button>
+        <a href="../developer.html" target="_blank" title="Systems Architect &amp; Engineering by Shomay Singh Parihar">Developer &rarr;</a>
+        <a href="../index.html" target="_blank"><span class="long-text">View Public Site &rarr;</span><span class="short-text">Site &rarr;</span></a>
+        <button type="button" id="signOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-bottom: 80px;">
+    <div class="view-head">
+      <div>
+        <span class="label">Client Commissions</span>
+        <h1>Booking <em>Management</em></h1>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="tabs" id="statusTabs">
+      <button type="button" data-filter="all" aria-selected="true">All (<span id="countAll">0</span>)</button>
+      <button type="button" data-filter="new" aria-selected="false">New (<span id="countNew">0</span>)</button>
+      <button type="button" data-filter="confirmed" aria-selected="false">Confirmed (<span id="countConfirmed">0</span>)</button>
+      <button type="button" data-filter="completed" aria-selected="false">Completed (<span id="countCompleted">0</span>)</button>
+      <button type="button" data-filter="cancelled" aria-selected="false">Cancelled (<span id="countCancelled">0</span>)</button>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Ref</th>
+            <th>Client</th>
+            <th>Commission &amp; Package</th>
+            <th>Event Date</th>
+            <th>Location</th>
+            <th>Quote</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookingsTbody">
+          <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--muted);">Loading bookings...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Edit Booking Modal -->
+  <div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-label="Booking Details">
+    <div class="modal-box">
+      <button type="button" class="modal-close" id="modalClose">Close [Esc]</button>
+      <span class="label" id="modalRefDisplay">Reference</span>
+      <h2 id="modalClientName">Client Name</h2>
+
+      <div style="background: var(--paper-2); padding: 18px; margin-bottom: 24px; font-size: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div><strong>Email:</strong> <span id="modalEmail"></span></div>
+          <div><strong>Phone:</strong> <span id="modalPhone"></span></div>
+          <div><strong>Type:</strong> <span id="modalType"></span></div>
+          <div><strong>Date:</strong> <span id="modalDate"></span></div>
+          <div><strong>Location:</strong> <span id="modalLocation"></span></div>
+          <div><strong>Guests:</strong> <span id="modalGuests"></span></div>
+          <div><strong>Budget:</strong> <span id="modalBudget"></span></div>
+          <div><strong>Referral:</strong> <span id="modalReferral"></span></div>
+        </div>
+        <div style="margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px;">
+          <strong>Client Message:</strong>
+          <div id="modalMessage" style="margin-top: 4px; font-style: italic;"></div>
+        </div>
+      </div>
+
+      <form id="editBookingForm">
+        <input type="hidden" id="editBookingId">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="field">
+            <label for="editStatus">Booking Status</label>
+            <select id="editStatus">
+              <option value="new">New (Awaiting Reply)</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="editQuotedAmount">Quoted Amount (&#8377; INR)</label>
+            <input type="number" id="editQuotedAmount" placeholder="e.g. 280000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="editDepositPaid" style="width: auto;">
+            <span>Holding deposit received (30%)</span>
+          </label>
+        </div>
+
+        <div class="field">
+          <label for="editInternalNotes">Internal Studio Notes (Private)</label>
+          <textarea id="editInternalNotes" placeholder="e.g. Second shooter: Rohan. Parents requested extra candid coverage of pheras."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; gap: 12px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 12px;">
+            <button type="submit" class="btn btn--solid" id="saveBookingBtn">Save Booking</button>
+            <button type="button" class="btn" id="sendConfirmEmailBtn" title="Send official confirmation email with reference">Send Confirmation Email</button>
+          </div>
+          <button type="button" class="btn btn--danger btn--small" id="deleteBookingBtn">Delete</button>
+        </div>
+        <div id="modalStatus" style="margin-top: 12px; font-size: 13px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    (function() {
+      Api.auth.isOwner().then(function(isOwner) {
+        if (!isOwner) window.location.href = 'login.html';
+      });
+
+      var signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          signOutBtn.disabled = true;
+          signOutBtn.textContent = 'Signing out...';
+          Api.auth.signOut('owner').finally(function() {
+            window.location.href = 'login.html';
+          });
+        });
+      }
+
+      var allBookings = [];
+      var activeFilter = 'all';
+      var activeBooking = null;
+
+      var tbody = document.getElementById('bookingsTbody');
+      var modal = document.getElementById('bookingModal');
+      var modalClose = document.getElementById('modalClose');
+
+      function updateTabCounts() {
+        var counts = { all: allBookings.length, new: 0, confirmed: 0, completed: 0, cancelled: 0 };
+        allBookings.forEach(function(b) {
+          if (counts[b.status] !== undefined) counts[b.status]++;
+        });
+        document.getElementById('countAll').textContent = counts.all;
+        document.getElementById('countNew').textContent = counts.new;
+        document.getElementById('countConfirmed').textContent = counts.confirmed;
+        document.getElementById('countCompleted').textContent = counts.completed;
+        document.getElementById('countCancelled').textContent = counts.cancelled;
+      }
+
+      function filteredBookings() {
+        if (activeFilter === 'all') return allBookings;
+        return allBookings.filter(function(b) { return b.status === activeFilter; });
+      }
+
+      function renderTable() {
+        var list = filteredBookings();
+        tbody.innerHTML = '';
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--muted);">No bookings found in this view.</td></tr>';
+          return;
+        }
+
+        list.forEach(function(b) {
+          var tr = document.createElement('tr');
+          var badgeClass = 'badge--' + (b.status || 'new');
+          var quoteStr = b.quoted_amount ? Api.format.money(b.quoted_amount) : '<span style="color:var(--muted)">Unquoted</span>';
+
+          tr.innerHTML =
+            '<td data-label="Status"><span class="badge ' + badgeClass + '">' + Api.format.esc(b.status) + '</span></td>' +
+            '<td data-label="Reference"><strong>' + Api.format.esc(b.reference) + '</strong></td>' +
+            '<td data-label="Client"><div class="cell-title">' + Api.format.esc(b.name) + '</div><div class="cell-sub">' + Api.format.esc(b.email) + (b.phone ? ' &middot; ' + Api.format.esc(b.phone) : '') + '</div></td>' +
+            '<td data-label="Commission">' + Api.format.esc(b.session_type) + (b.package ? '<div class="cell-sub">' + Api.format.esc(b.package) + '</div>' : '') + '</td>' +
+            '<td data-label="Date">' + (b.event_date ? Api.format.longDate(b.event_date) : 'Pending') + '</td>' +
+            '<td data-label="Location">' + Api.format.esc(b.location || '—') + '</td>' +
+            '<td data-label="Quote">' + quoteStr + '</td>' +
+            '<td data-label="Action"><button type="button" class="btn btn--small manage-btn" data-id="' + b.id + '">Manage &rarr;</button></td>';
+
+          tr.querySelector('.manage-btn').addEventListener('click', function() {
+            openModal(b);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+
+      function openModal(b) {
+        activeBooking = b;
+        document.getElementById('editBookingId').value = b.id;
+        document.getElementById('modalRefDisplay').textContent = 'Reference: ' + b.reference;
+        document.getElementById('modalClientName').textContent = b.name;
+        document.getElementById('modalEmail').innerHTML = '<a href="mailto:' + encodeURIComponent(b.email) + '" class="text-link">' + Api.format.esc(b.email) + '</a>';
+        document.getElementById('modalPhone').innerHTML = b.phone ? '<a href="tel:' + encodeURIComponent(b.phone) + '" class="text-link">' + Api.format.esc(b.phone) + '</a>' : '—';
+        document.getElementById('modalType').textContent = b.session_type + (b.package ? ' (' + b.package + ')' : '');
+        document.getElementById('modalDate').textContent = b.event_date ? Api.format.longDate(b.event_date) : 'Undecided';
+        document.getElementById('modalLocation').textContent = b.location || '—';
+        document.getElementById('modalGuests').textContent = b.guest_count || '—';
+        document.getElementById('modalBudget').textContent = b.budget || '—';
+        document.getElementById('modalReferral').textContent = b.referral || '—';
+        document.getElementById('modalMessage').textContent = b.message || 'No message entered.';
+
+        document.getElementById('editStatus').value = b.status || 'new';
+        document.getElementById('editQuotedAmount').value = b.quoted_amount || '';
+        document.getElementById('editDepositPaid').checked = !!b.deposit_paid;
+        document.getElementById('editInternalNotes').value = b.internal_notes || '';
+        document.getElementById('modalStatus').textContent = '';
+
+        modal.classList.add('is-open');
+      }
+
+      function closeModal() {
+        modal.classList.remove('is-open');
+        activeBooking = null;
+      }
+
+      modalClose.addEventListener('click', closeModal);
+      window.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+      // Save Changes
+      document.getElementById('editBookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!activeBooking) return;
+        var btn = document.getElementById('saveBookingBtn');
+        var statusMsg = document.getElementById('modalStatus');
+
+        var patch = {
+          status: document.getElementById('editStatus').value,
+          quoted_amount: document.getElementById('editQuotedAmount').value ? parseFloat(document.getElementById('editQuotedAmount').value) : null,
+          deposit_paid: document.getElementById('editDepositPaid').checked,
+          internal_notes: document.getElementById('editInternalNotes').value.trim() || null
+        };
+
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        Api.studio.updateBooking(activeBooking.id, patch).then(function() {
+          Object.assign(activeBooking, patch);
+          btn.disabled = false;
+          btn.textContent = 'Save Booking';
+          statusMsg.style.color = 'var(--status-confirmed)';
+          statusMsg.textContent = 'Booking updated successfully.';
+          updateTabCounts();
+          renderTable();
+          setTimeout(closeModal, 800);
+        }).catch(function(err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.textContent = 'Save Booking';
+          statusMsg.style.color = 'var(--status-cancelled)';
+          statusMsg.textContent = 'Update failed: ' + (err.message || err);
+        });
+      });
+
+      // Send Confirmation Email
+      document.getElementById('sendConfirmEmailBtn').addEventListener('click', function() {
+        if (!activeBooking) return;
+        var note = prompt('Add an optional personal message to include in the confirmation email:', 'I have locked in the date on my calendar. Looking forward to meeting you both soon.');
+        if (note === null) return;
+
+        var emailData = Emails.bookingConfirmed(activeBooking, note);
+        Api.sendEmail({
+          to_email: activeBooking.email,
+          to_name: activeBooking.name,
+          subject: emailData.subject,
+          html: emailData.html
+        }).then(function() {
+          alert('Confirmation email sent to ' + activeBooking.email);
+        }).catch(function(err) {
+          alert('Failed sending email: ' + err.message);
+        });
+      });
+
+      // Delete Booking
+      document.getElementById('deleteBookingBtn').addEventListener('click', function() {
+        if (!activeBooking) return;
+        if (confirm('Permanently delete booking ' + activeBooking.reference + ' for ' + activeBooking.name + '?')) {
+          Api.studio.deleteBooking(activeBooking.id).then(function() {
+            allBookings = allBookings.filter(function(b) { return b.id !== activeBooking.id; });
+            closeModal();
+            updateTabCounts();
+            renderTable();
+          });
+        }
+      });
+
+      // Tabs
+      document.getElementById('statusTabs').addEventListener('click', function(e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        document.querySelectorAll('#statusTabs button').forEach(function(b) { b.setAttribute('aria-selected', 'false'); });
+        btn.setAttribute('aria-selected', 'true');
+        activeFilter = btn.dataset.filter;
+        renderTable();
+      });
+
+      // Initial Fetch
+      Api.studio.bookings().then(function(rows) {
+        allBookings = rows;
+        updateTabCounts();
+        renderTable();
+
+        // Direct URL param open
+        var params = new URLSearchParams(window.location.search);
+        var targetId = params.get('id');
+        if (targetId) {
+          var found = allBookings.find(function(b) { return b.id === targetId; });
+          if (found) openModal(found);
+        }
+      });
+    })();
+  </script>
+
+  <!-- Mobile Native Bottom Navigation Dock -->
+  <nav class="studio-bottom-nav" aria-label="Mobile Studio Navigation">
+    <a href="index.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Dash</span>
+    </a>
+    <a href="bookings.html" class="studio-bottom-item is-active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Bookings</span>
+      <span class="studio-bottom-badge badge-bookings is-zero">0</span>
+    </a>
+    <a href="galleries.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Galleries</span>
+    </a>
+    <a href="portfolio.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Portfolio</span>
+    </a>
+    <a href="upload.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>Upload</span>
+    </a>
+    <a href="messages.html" class="studio-bottom-item">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Inbox</span>
+      <span class="studio-bottom-badge badge-messages is-zero">0</span>
+    </a>
+  </nav>
+
+  <script src="assets/js/studio-app.js"></script>
+</body>
+</html>
+
