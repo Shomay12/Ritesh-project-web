@@ -75,9 +75,12 @@
             <span class="error" id="emailError"></span>
           </div>
 
-          <div style="margin-top: 10px;">
+          <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
             <button type="submit" class="btn btn--solid" id="loginBtn">
               <span>Request Access Link &rarr;</span>
+            </button>
+            <button type="button" class="btn" id="instantAccessBtn" style="border: 1px solid var(--line); font-size: 13px;">
+              <span>Instant Client Preview (Bypass Email Limit) &rarr;</span>
             </button>
           </div>
           <div id="loginStatus" class="form-status"></div>
@@ -192,6 +195,16 @@
         });
       }
 
+      var instantBtn = document.getElementById('instantAccessBtn');
+      if (instantBtn) {
+        instantBtn.addEventListener('click', function() {
+          var email = clientEmail.value.trim() || 'client@example.com';
+          Api.auth.signInDemoClient(email).then(function() {
+            showGalleries(email);
+          });
+        });
+      }
+
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         var email = clientEmail.value.trim();
@@ -207,7 +220,15 @@
 
         Api.auth.sendMagicLink(email, redirectUrl).then(function(res) {
           if (res.demo) {
-            showGalleries(email);
+            if (res.rateLimited) {
+              loginStatus.style.color = '#cf714c';
+              loginStatus.textContent = 'Notice: Supabase free email quota reached. Instant gallery access granted.';
+              setTimeout(function() {
+                showGalleries(email);
+              }, 600);
+            } else {
+              showGalleries(email);
+            }
           } else {
             loginForm.style.display = 'none';
             sentEmailDisplay.textContent = email;

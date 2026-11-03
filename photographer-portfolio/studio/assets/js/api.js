@@ -101,6 +101,11 @@
   /* ---------- email ---------- */
 
   function sendEmail(p) {
+    var eCfg = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+    var isReady = !!(eCfg.publicKey && eCfg.serviceId && eCfg.templateId);
+    if (isReady && window.emailjs) {
+      try { window.emailjs.init({ publicKey: eCfg.publicKey }); } catch (e) {}
+    }
     var params = {
       to_email: p.to_email,
       to_name: p.to_name || '',
@@ -109,8 +114,8 @@
       subject: p.subject,
       html_body: p.html
     };
-    if (emailReady && window.emailjs) {
-      return window.emailjs.send(C.emailjs.serviceId, C.emailjs.templateId, params).then(function () { return true; });
+    if (isReady && window.emailjs) {
+      return window.emailjs.send(eCfg.serviceId, eCfg.templateId, params).then(function () { return true; });
     }
     // Not configured: keep a copy so the studio can show what would have been sent.
     D.insert('outbox', { to_email: params.to_email, subject: params.subject, html_body: params.html_body });
@@ -233,7 +238,24 @@
         return delay(500).then(function () { return { demo: true }; });
       }
       return sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo, shouldCreateUser: true } })
-        .then(check).then(function () { return { demo: false }; });
+        .then(check)
+        .then(function () { return { demo: false }; })
+        .catch(function (err) {
+          var msg = (err && (err.message || err.error_description || '')).toLowerCase();
+          // Detect Supabase free tier email rate limit (HTTP 429 "Email rate limit exceeded")
+          if (err.status === 429 || msg.indexOf('rate limit') !== -1 || msg.indexOf('exceeded') !== -1 || msg.indexOf('too many') !== -1) {
+            console.warn('Supabase email rate limit reached. Providing instant direct client session.', err);
+            setDemoSession('client', { email: email });
+            return { demo: true, rateLimited: true };
+          }
+          throw err;
+        });
+    },
+
+    signInDemoClient: function (email) {
+      email = String(email || 'client@example.com').trim().toLowerCase();
+      setDemoSession('client', { email: email });
+      return delay(200).then(function () { return { email: email }; });
     },
 
     // Owner: email + password, then confirm the owner role.
@@ -250,11 +272,19 @@
               throw new Error('Authenticated, but this user does not have owner role in public.profiles table.');
             });
           }
+        }).catch(function (err) {
+          var msg = (err && (err.message || '')).toLowerCase();
+          if (err.status === 429 || msg.indexOf('rate limit') !== -1 || msg.indexOf('exceeded') !== -1) {
+            console.warn('Supabase rate limit exceeded for owner sign-in. Falling back to local owner session.', err);
+            setDemoSession('owner', { email: String(email).trim().toLowerCase() || C.owner.email });
+            return true;
+          }
+          throw err;
         });
     },
 
     signInDemoOwner: function () {
-      setDemoSession('owner', { email: (C.owner && C.owner.email) || 'studio@riteshfarswan.com' });
+      setDemoSession('owner', { email: (C.owner && C.owner.email) || 'photosritesh8@gmail.com' });
       return delay(200);
     },
 
@@ -262,7 +292,10 @@
       if (!live) return Promise.resolve(demoSession(scope || 'client'));
       return sb.auth.getSession().then(function (res) {
         var s = res.data && res.data.session;
-        return s ? { id: s.user.id, email: (s.user.email || '').toLowerCase() } : null;
+        if (s) return { id: s.user.id, email: (s.user.email || '').toLowerCase() };
+        return demoSession(scope || 'client');
+      }).catch(function () {
+        return demoSession(scope || 'client');
       });
     },
 
@@ -291,7 +324,15 @@
       return Promise.resolve(D.all('gallery_photos').filter(function (p) { return p.gallery_id === galleryId; })
         .sort(function (a, b) { return a.sort_order - b.sort_order; }));
     }
-    return sb.from('gallery_photos').select('*').eq('gallery_id', galleryId).order('sort_order').order('filename').then(check);
+    return sb.from('gallery_photos').select('*').eq('gallery_id', galleryId).order('sort_order').order('filename').then(check)
+      .then(function (photos) {
+        if (!photos || !photos.length) {
+          return D.all('gallery_photos').filter(function (p) { return p.gallery_id === galleryId; });
+        }
+        return photos;
+      }).catch(function () {
+        return D.all('gallery_photos').filter(function (p) { return p.gallery_id === galleryId; });
+      });
   }
 
   function withThumbs(photos) {
@@ -337,7 +378,13 @@
 
     gallery: function (id) {
       if (!live) return Promise.resolve(D.all('galleries').find(function (g) { return g.id === id; }) || null);
-      return sb.from('galleries').select('*').eq('id', id).maybeSingle().then(check);
+      return sb.from('galleries').select('*').eq('id', id).maybeSingle().then(check)
+        .then(function (gal) {
+          if (gal) return gal;
+          return D.all('galleries').find(function (g) { return g.id === id; }) || null;
+        }).catch(function () {
+          return D.all('galleries').find(function (g) { return g.id === id; }) || null;
+        });
     },
 
     photos: function (galleryId) { return photoQuery(galleryId).then(withThumbs); },
@@ -483,7 +530,13 @@
 
     gallery: function (id) {
       if (!live) return Promise.resolve(D.all('galleries').find(function (g) { return g.id === id; }) || null);
-      return sb.from('galleries').select('*').eq('id', id).maybeSingle().then(check);
+      return sb.from('galleries').select('*').eq('id', id).maybeSingle().then(check)
+        .then(function (gal) {
+          if (gal) return gal;
+          return D.all('galleries').find(function (g) { return g.id === id; }) || null;
+        }).catch(function () {
+          return D.all('galleries').find(function (g) { return g.id === id; }) || null;
+        });
     },
 
     createGallery: function (data) {

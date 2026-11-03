@@ -126,7 +126,7 @@ window.SITE_CONFIG = {
   },
   owner: {
     name: 'Ritesh Farswan',
-    email: 'studio@riteshfarswan.com',
+    email: 'photosritesh8@gmail.com',
     phone: '+91 98200 41736',
     city: 'Mumbai'
   }

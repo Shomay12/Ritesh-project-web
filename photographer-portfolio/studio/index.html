@@ -118,6 +118,38 @@
       </div>
     </div>
 
+    <!-- EmailJS Integration & Live Email Routing Panel -->
+    <div style="margin-top: 56px; border: 1px solid var(--line); background: var(--paper-2); padding: 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <div>
+          <span class="label">Email Delivery Configuration</span>
+          <h2 style="font-size: 20px; font-weight: 400; margin: 4px 0 0;">EmailJS Free Tier &mdash; <span style="font-family: monospace; font-size: 0.9em; color: var(--accent);">photosritesh8@gmail.com</span></h2>
+          <p class="caption" style="margin-top: 4px;">Client inquiries and booking confirmations will be dispatched directly to your Gmail via EmailJS.</p>
+        </div>
+        <div id="emailjsStatusBadge" style="padding: 6px 12px; border-radius: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;">Checking status...</div>
+      </div>
+
+      <form id="emailjsConfigForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; align-items: end;">
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Service ID</label>
+          <input type="text" id="cfgEmailServiceId" placeholder="e.g. service_xxxx" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Template ID</label>
+          <input type="text" id="cfgEmailTemplateId" placeholder="e.g. template_xxxx" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);">Public Key</label>
+          <input type="text" id="cfgEmailPublicKey" placeholder="e.g. user_xxxx or public key" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-family: monospace;">
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn btn--solid btn--small" style="white-space: nowrap;">Save EmailJS Keys</button>
+          <button type="button" id="testEmailBtn" class="btn btn--small" style="white-space: nowrap;">Send Test Email &rarr;</button>
+        </div>
+      </form>
+      <div id="emailTestFeedback" style="margin-top: 12px; font-size: 13px; min-height: 18px;"></div>
+    </div>
+
     <!-- Demo Mode Management Bar -->
     <div style="margin-top: 60px; padding: 24px; border: 1px solid var(--line); background: var(--paper-2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
       <div>
@@ -211,6 +243,73 @@
           Api.studio.resetDemo();
           window.location.reload();
         }
+      });
+
+      // EmailJS configuration & test runner
+      var sBadge = document.getElementById('emailjsStatusBadge');
+      var sService = document.getElementById('cfgEmailServiceId');
+      var sTemplate = document.getElementById('cfgEmailTemplateId');
+      var sPublic = document.getElementById('cfgEmailPublicKey');
+      var fb = document.getElementById('emailTestFeedback');
+
+      function refreshEmailStatus() {
+        var e = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+        sService.value = e.serviceId || '';
+        sTemplate.value = e.templateId || '';
+        sPublic.value = e.publicKey || '';
+        var isConfigured = !!(e.serviceId && e.templateId && e.publicKey);
+        if (isConfigured) {
+          sBadge.textContent = 'Active (Live Sending)';
+          sBadge.style.background = '#e8f5e9';
+          sBadge.style.color = '#2e7d32';
+        } else {
+          sBadge.textContent = 'Demo Mode (Keys Not Set)';
+          sBadge.style.background = '#fff3e0';
+          sBadge.style.color = '#e65100';
+        }
+      }
+      refreshEmailStatus();
+
+      document.getElementById('emailjsConfigForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var keys = {
+          serviceId: sService.value.trim(),
+          templateId: sTemplate.value.trim(),
+          publicKey: sPublic.value.trim()
+        };
+        localStorage.setItem('studio_emailjs_config', JSON.stringify(keys));
+        window.SITE_CONFIG.emailjs = Object.assign({}, window.SITE_CONFIG.emailjs, keys);
+        refreshEmailStatus();
+        fb.style.color = '#2e7d32';
+        fb.textContent = 'EmailJS keys saved successfully in studio preferences.';
+      });
+
+      document.getElementById('testEmailBtn').addEventListener('click', function() {
+        var e = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+        if (!e.serviceId || !e.templateId || !e.publicKey) {
+          fb.style.color = '#e65100';
+          fb.textContent = 'Please enter and save your Service ID, Template ID, and Public Key before running a test.';
+          return;
+        }
+        fb.style.color = 'var(--muted)';
+        fb.textContent = 'Dispatching test email to ' + (SITE_CONFIG.owner.email || 'photosritesh8@gmail.com') + '...';
+        Api.sendEmail({
+          to_email: SITE_CONFIG.owner.email || 'photosritesh8@gmail.com',
+          to_name: SITE_CONFIG.owner.name || 'Ritesh Farswan',
+          subject: 'Studio Verification: EmailJS Connected Successfully',
+          html: '<p>This is a live test notification from your Ritesh Farswan Studio platform verifying that EmailJS is sending directly to photosritesh8@gmail.com.</p>'
+        }).then(function(sent) {
+          if (sent) {
+            fb.style.color = '#2e7d32';
+            fb.textContent = 'Test email dispatched successfully! Please check your inbox at ' + (SITE_CONFIG.owner.email || 'photosritesh8@gmail.com') + '.';
+          } else {
+            fb.style.color = '#c62828';
+            fb.textContent = 'Keys are not set or EmailJS returned false. In demo mode, notifications are saved locally to Studio Outbox.';
+          }
+        }).catch(function(err) {
+          fb.style.color = '#c62828';
+          fb.textContent = 'EmailJS error: ' + (err && (err.text || err.message) ? (err.text || err.message) : JSON.stringify(err));
+        });
       });
     })();
   </script>

@@ -24,7 +24,7 @@ window.SITE_CONFIG = {
 
   owner: {
     name: 'Ritesh Farswan',
-    email: 'studio@riteshfarswan.com',
+    email: 'photosritesh8@gmail.com',
     phone: '+91 98200 41736',
     instagram: 'riteshfarswan.photo',
     city: 'Mumbai'
@@ -44,3 +44,13 @@ window.SITE_CONFIG = {
   currency: 'INR'
 };
 
+// Allow studio settings or browser storage overrides if configured in Studio UI
+try {
+  var _savedEmailJs = localStorage.getItem('studio_emailjs_config');
+  if (_savedEmailJs) {
+    var _parsed = JSON.parse(_savedEmailJs);
+    if (_parsed && typeof _parsed === 'object' && _parsed.publicKey) {
+      window.SITE_CONFIG.emailjs = Object.assign({}, window.SITE_CONFIG.emailjs, _parsed);
+    }
+  }
+} catch (e) {}
