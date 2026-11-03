@@ -185,6 +185,16 @@ em, .italic { font-style: italic; }
 }
 .ticker-btn:hover { color: #f6f3ed; }
 .ticker-btn[aria-pressed="true"] { color: #f6f3ed; text-decoration: underline; text-underline-offset: 3px; }
+.ambience-wave {
+  display: inline-block;
+  margin-left: 4px;
+  color: #cf714c;
+  animation: ambience-bob 1.8s ease-in-out infinite;
+}
+@keyframes ambience-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(-2px); opacity: 1; }
+}
 .live-clock { color: #cfc8be; font-family: var(--mono); }
 
 /* ---------- site header ---------- */

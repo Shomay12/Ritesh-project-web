@@ -101,6 +101,147 @@
   }
 
   /* -------------------------------------------------------------------
+     1b. Traditional Wedding Ambient Background Music
+     Plays "Maangal Traditional Wedding Songs" in loop at ~35% volume.
+     ------------------------------------------------------------------- */
+  var ambienceAudio = null;
+  var ambienceEnabled = false;
+  var ambienceTargetVolume = 0.35; // 35% volume (within 30-40% range)
+  var ambienceFadeInterval = null;
+
+  function resolveMusicPath() {
+    var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
+    var base = isClientSubdir ? '../' : '';
+    return base + 'assets/audio/wedding-ambience.mp3';
+  }
+
+  function initAmbienceAudio() {
+    if (ambienceAudio) return;
+    try {
+      ambienceAudio = new Audio();
+      ambienceAudio.src = resolveMusicPath();
+      ambienceAudio.loop = true;
+      ambienceAudio.volume = 0;
+      ambienceAudio.preload = 'metadata';
+
+      // Fallback path in case assets/audio isn't resolved in local file browsing
+      ambienceAudio.addEventListener('error', function () {
+        var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
+        var fallbackPath = (isClientSubdir ? '../../' : '../') + 'music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3';
+        if (ambienceAudio && ambienceAudio.src && ambienceAudio.src.indexOf('wedding-ambience.mp3') !== -1) {
+          ambienceAudio.src = fallbackPath;
+          if (ambienceEnabled) {
+            ambienceAudio.play().catch(function () {});
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Ambience audio initialization error:', e);
+    }
+  }
+
+  function fadeAudio(targetVol, durationMs, onDone) {
+    if (!ambienceAudio) return;
+    if (ambienceFadeInterval) clearInterval(ambienceFadeInterval);
+    var steps = 20;
+    var stepTime = durationMs / steps;
+    var startVol = ambienceAudio.volume;
+    var delta = targetVol - startVol;
+    var count = 0;
+
+    ambienceFadeInterval = setInterval(function () {
+      count++;
+      var current = startVol + delta * (count / steps);
+      ambienceAudio.volume = Math.max(0, Math.min(1, current));
+      if (count >= steps) {
+        clearInterval(ambienceFadeInterval);
+        ambienceFadeInterval = null;
+        ambienceAudio.volume = targetVol;
+        if (typeof onDone === 'function') onDone();
+      }
+    }, stepTime);
+  }
+
+  function startAmbienceMusic() {
+    initAmbienceAudio();
+    if (!ambienceAudio) return;
+    ambienceAudio.loop = true;
+    var promise = ambienceAudio.play();
+    if (promise !== undefined) {
+      promise.then(function () {
+        fadeAudio(ambienceTargetVolume, 1000);
+      }).catch(function (err) {
+        // Autoplay policy: play on next user gesture
+        function onGesture() {
+          if (ambienceEnabled && ambienceAudio) {
+            ambienceAudio.play().then(function () {
+              fadeAudio(ambienceTargetVolume, 1000);
+            }).catch(function () {});
+          }
+          document.removeEventListener('click', onGesture);
+          document.removeEventListener('keydown', onGesture);
+        }
+        document.addEventListener('click', onGesture);
+        document.addEventListener('keydown', onGesture);
+      });
+    }
+  }
+
+  function stopAmbienceMusic() {
+    if (!ambienceAudio) return;
+    fadeAudio(0, 500, function () {
+      ambienceAudio.pause();
+    });
+  }
+
+  function updateAmbienceButtons(state) {
+    var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
+    btns.forEach(function (btn) {
+      if (state) {
+        btn.innerHTML = 'Ambience: ON <span class="ambience-wave">♫</span>';
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('title', 'Background wedding music active (35% volume). Click to pause.');
+      } else {
+        btn.textContent = 'Ambience: OFF';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('title', 'Play traditional wedding ambient background music (35% volume in loop)');
+      }
+    });
+  }
+
+  function initAmbienceToggle() {
+    var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
+    if (!btns.length) return;
+
+    var saved = localStorage.getItem('studio_ambience_music');
+    if (saved === 'on') {
+      ambienceEnabled = true;
+      updateAmbienceButtons(true);
+      function autoStartOnGesture() {
+        if (ambienceEnabled) startAmbienceMusic();
+        document.removeEventListener('click', autoStartOnGesture);
+      }
+      document.addEventListener('click', autoStartOnGesture);
+    }
+
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        ambienceEnabled = !ambienceEnabled;
+        if (ambienceEnabled) {
+          startAmbienceMusic();
+          updateAmbienceButtons(true);
+          localStorage.setItem('studio_ambience_music', 'on');
+        } else {
+          stopAmbienceMusic();
+          updateAmbienceButtons(false);
+          localStorage.setItem('studio_ambience_music', 'off');
+        }
+        playShutterClick();
+      });
+    });
+  }
+
+  /* -------------------------------------------------------------------
      2. Darkroom Amber Mode (Daylight Linen vs Red Lamp Darkroom)
      ------------------------------------------------------------------- */
   function initDarkroomToggle() {
@@ -470,6 +611,7 @@
   function init() {
     initStudioClock();
     initSoundToggle();
+    initAmbienceToggle();
     initDarkroomToggle();
     initFilmStockSelector();
     initLensSimulator();
