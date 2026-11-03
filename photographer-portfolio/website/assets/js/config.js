@@ -11,8 +11,8 @@
 */
 window.SITE_CONFIG = {
   // Supabase -> Project Settings -> API
-  supabaseUrl: '',
-  supabaseAnonKey: '',
+  supabaseUrl: 'https://dlqpdnhelisfxkpdkymv.supabase.co',
+  supabaseAnonKey: 'sb_publishable_GRCKDMtdPwfsvg73iZHiCA_CL0xLg9v',
 
   // EmailJS -> Account -> General (public key), Email Services, Email Templates
   // One template is used for every message. See README "EmailJS".

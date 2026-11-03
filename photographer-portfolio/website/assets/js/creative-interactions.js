@@ -116,28 +116,39 @@
   }
 
   function initAmbienceAudio() {
-    if (ambienceAudio) return;
-    try {
-      ambienceAudio = new Audio();
-      ambienceAudio.src = resolveMusicPath();
+    if (ambienceAudio) return ambienceAudio;
+    var existing = document.getElementById('studioAmbientAudio');
+    if (existing) {
+      ambienceAudio = existing;
+    } else {
+      try {
+        ambienceAudio = new Audio();
+        ambienceAudio.id = 'studioAmbientAudio';
+        ambienceAudio.src = resolveMusicPath();
+        document.body.appendChild(ambienceAudio);
+      } catch (e) {
+        console.warn('Ambience audio initialization error:', e);
+      }
+    }
+    if (ambienceAudio) {
       ambienceAudio.loop = true;
       ambienceAudio.volume = 0;
-      ambienceAudio.preload = 'metadata';
+      ambienceAudio.preload = 'auto';
 
-      // Fallback path in case assets/audio isn't resolved in local file browsing
       ambienceAudio.addEventListener('error', function () {
         var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
         var fallbackPath = (isClientSubdir ? '../../' : '../') + 'music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3';
         if (ambienceAudio && ambienceAudio.src && ambienceAudio.src.indexOf('wedding-ambience.mp3') !== -1) {
           ambienceAudio.src = fallbackPath;
           if (ambienceEnabled) {
-            ambienceAudio.play().catch(function () {});
+            ambienceAudio.play().then(function () {
+              fadeAudio(ambienceTargetVolume, 1000);
+            }).catch(function () {});
           }
         }
       });
-    } catch (e) {
-      console.warn('Ambience audio initialization error:', e);
     }
+    return ambienceAudio;
   }
 
   function fadeAudio(targetVol, durationMs, onDone) {
@@ -169,27 +180,29 @@
     var promise = ambienceAudio.play();
     if (promise !== undefined) {
       promise.then(function () {
-        fadeAudio(ambienceTargetVolume, 1000);
-      }).catch(function (err) {
-        // Autoplay policy: play on next user gesture
+        fadeAudio(ambienceTargetVolume, 1200);
+      }).catch(function () {
+        // Autoplay policy prevented immediate playback; unlock on user's first gesture
         function onGesture() {
-          if (ambienceEnabled && ambienceAudio) {
+          if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
             ambienceAudio.play().then(function () {
-              fadeAudio(ambienceTargetVolume, 1000);
+              fadeAudio(ambienceTargetVolume, 1200);
             }).catch(function () {});
           }
           document.removeEventListener('click', onGesture);
           document.removeEventListener('keydown', onGesture);
+          document.removeEventListener('touchstart', onGesture);
         }
-        document.addEventListener('click', onGesture);
-        document.addEventListener('keydown', onGesture);
+        document.addEventListener('click', onGesture, { once: true });
+        document.addEventListener('keydown', onGesture, { once: true });
+        document.addEventListener('touchstart', onGesture, { once: true });
       });
     }
   }
 
   function stopAmbienceMusic() {
     if (!ambienceAudio) return;
-    fadeAudio(0, 500, function () {
+    fadeAudio(0, 400, function () {
       ambienceAudio.pause();
     });
   }
@@ -211,21 +224,36 @@
 
   function initAmbienceToggle() {
     var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
-    if (!btns.length) return;
+    initAmbienceAudio();
 
     var saved = localStorage.getItem('studio_ambience_music');
-    if (saved === 'on') {
+    // Enabled by default unless explicitly turned off by the user
+    if (saved !== 'off') {
       ambienceEnabled = true;
       updateAmbienceButtons(true);
-      function autoStartOnGesture() {
-        if (ambienceEnabled) startAmbienceMusic();
-        document.removeEventListener('click', autoStartOnGesture);
+      startAmbienceMusic();
+      // Also register first interaction unlock
+      function autoUnlockOnFirstGesture() {
+        if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
+          ambienceAudio.play().then(function () {
+            fadeAudio(ambienceTargetVolume, 1200);
+          }).catch(function () {});
+        }
+        document.removeEventListener('click', autoUnlockOnFirstGesture);
+        document.removeEventListener('touchstart', autoUnlockOnFirstGesture);
+        document.removeEventListener('keydown', autoUnlockOnFirstGesture);
       }
-      document.addEventListener('click', autoStartOnGesture);
+      document.addEventListener('click', autoUnlockOnFirstGesture, { once: true });
+      document.addEventListener('touchstart', autoUnlockOnFirstGesture, { once: true });
+      document.addEventListener('keydown', autoUnlockOnFirstGesture, { once: true });
+    } else {
+      ambienceEnabled = false;
+      updateAmbienceButtons(false);
     }
 
     btns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         ambienceEnabled = !ambienceEnabled;
         if (ambienceEnabled) {
           startAmbienceMusic();

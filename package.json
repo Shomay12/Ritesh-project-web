@@ -1,0 +1,16 @@
+{
+  "name": "ritesh-project-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aditi Rane Photography Web Platform & Studio Suite",
+  "scripts": {
+    "supabase:login": "npx supabase login",
+    "supabase:init": "npx supabase init",
+    "supabase:link": "npx supabase link --project-ref dlqpdnhelisfxkpdkymv",
+    "supabase:db:push": "npx supabase db push",
+    "supabase:status": "npx supabase status"
+  },
+  "devDependencies": {
+    "supabase": "^3.0.0"
+  }
+}

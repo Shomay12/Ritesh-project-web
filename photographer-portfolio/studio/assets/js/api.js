@@ -166,7 +166,16 @@
         return Promise.resolve(items.map(decoratePortfolio));
       }
       return sb.from('portfolio_items').select('*').eq('published', true).order('sort_order')
-        .then(check).then(function (rows) { return rows.map(decoratePortfolio); });
+        .then(check).then(function (rows) {
+          if (!rows || rows.length === 0) {
+            return D.all('portfolio_items').filter(function (i) { return i.published; }).map(decoratePortfolio);
+          }
+          return rows.map(decoratePortfolio);
+        })
+        .catch(function (err) {
+          console.warn('Supabase portfolio_items query failed (schema.sql can be applied in Supabase SQL editor). Using default curated portfolio.', err);
+          return D.all('portfolio_items').filter(function (i) { return i.published; }).map(decoratePortfolio);
+        });
     },
 
     getUnavailableDates: function (fromIso, toIsoDay) {
