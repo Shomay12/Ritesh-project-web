@@ -133,6 +133,19 @@ window.SITE_CONFIG = {
 };
 ```
 
+### Step 3: Resend Setup (High Deliverability Transactional Emails)
+1. Sign up at [resend.com](https://resend.com/signup).
+2. Navigate to **API Keys** &rarr; **Create API Key** and copy your `re_...` key.
+3. In `automation/.env`, set:
+   ```env
+   RESEND_API_KEY=re_your_api_key
+   RESEND_FROM_EMAIL=Ritesh Farswan <onboarding@resend.dev>
+   ```
+4. Configure Supabase Auth SMTP to send client magic links via Resend:
+   - Go to Supabase Dashboard &rarr; **Project Settings** &rarr; **Authentication** &rarr; **SMTP Settings**.
+   - Host: `smtp.resend.com` | Port: `465` (SSL) | User: `resend` | Password: `re_...`
+5. Test delivery with: `python3 automation/test_resend.py`
+
 ---
 
 ## 5. Python Automation Suite

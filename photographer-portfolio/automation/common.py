@@ -34,6 +34,7 @@ load_dotenv(REPO_ROOT / ".env", override=False)
 GALLERY_BUCKET = "client-galleries"
 PORTFOLIO_BUCKET = "portfolio"
 EMAILJS_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send"
+RESEND_ENDPOINT = "https://api.resend.com/emails"
 
 
 class ConfigError(RuntimeError):
@@ -320,7 +321,7 @@ def send_email(
     html_body: str,
     reply_to: str | None = None,
 ) -> bool:
-    """Send one email through EmailJS. Returns True on success (or when DRY_RUN logs it)."""
+    """Send one email through Resend (preferred) or EmailJS. Returns True on success."""
     global _last_send
     cfg = settings()
     reply = reply_to or cfg.owner_email
@@ -329,6 +330,40 @@ def send_email(
         log.info("[dry-run] email to %s <%s>: %s (%d chars of HTML)", to_name, to_email, subject, len(html_body))
         return True
 
+    # Priority 1: Resend (https://resend.com)
+    resend_key = env("RESEND_API_KEY")
+    if resend_key:
+        from_email = env("RESEND_FROM_EMAIL", f"{cfg.owner_name} <onboarding@resend.dev>")
+        payload = {
+            "from": from_email,
+            "to": [f"{to_name} <{to_email}>" if to_name else to_email],
+            "subject": subject,
+            "html": html_body,
+        }
+        if reply:
+            payload["reply_to"] = reply
+
+        headers = {
+            "Authorization": f"Bearer {resend_key}",
+            "Content-Type": "application/json",
+        }
+
+        for attempt in range(1, 4):
+            try:
+                resp = requests.post(RESEND_ENDPOINT, json=payload, headers=headers, timeout=30)
+                if 200 <= resp.status_code < 300:
+                    log.info("Email sent via Resend to %s: %s", to_email, subject)
+                    return True
+                body = (resp.text or "").strip()[:300]
+                log.error("Resend rejected email to %s (HTTP %s): %s", to_email, resp.status_code, body)
+                if resp.status_code < 500 and resp.status_code != 429:
+                    return False
+            except requests.RequestException as exc:
+                log.warning("Network error sending via Resend: %s", exc)
+            time.sleep(2 * attempt)
+        return False
+
+    # Priority 2: EmailJS (https://dashboard.emailjs.com)
     keys = require_env(*_EMAIL_KEYS)
     payload = {
         "service_id": keys["EMAILJS_SERVICE_ID"],

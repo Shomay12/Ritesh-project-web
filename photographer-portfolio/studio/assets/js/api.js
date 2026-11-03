@@ -101,11 +101,6 @@
   /* ---------- email ---------- */
 
   function sendEmail(p) {
-    var eCfg = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
-    var isReady = !!(eCfg.publicKey && eCfg.serviceId && eCfg.templateId);
-    if (isReady && window.emailjs) {
-      try { window.emailjs.init({ publicKey: eCfg.publicKey }); } catch (e) {}
-    }
     var params = {
       to_email: p.to_email,
       to_name: p.to_name || '',
@@ -114,7 +109,28 @@
       subject: p.subject,
       html_body: p.html
     };
+
+    // Priority 1: Supabase Edge Function (Resend) if live
+    if (live && sb && sb.functions) {
+      return sb.functions.invoke('resend-email', { body: params })
+        .then(function (res) {
+          if (res.data && !res.error && !res.data.error) return true;
+          throw (res.error || new Error((res.data && res.data.error) || 'Resend error'));
+        })
+        .catch(function (err) {
+          // If Resend Edge Function is not active, fallback to EmailJS
+          return sendViaEmailJs(params);
+        });
+    }
+
+    return sendViaEmailJs(params);
+  }
+
+  function sendViaEmailJs(params) {
+    var eCfg = (window.SITE_CONFIG && window.SITE_CONFIG.emailjs) || {};
+    var isReady = !!(eCfg.publicKey && eCfg.serviceId && eCfg.templateId);
     if (isReady && window.emailjs) {
+      try { window.emailjs.init({ publicKey: eCfg.publicKey }); } catch (e) {}
       return window.emailjs.send(eCfg.serviceId, eCfg.templateId, params).then(function () { return true; });
     }
     // Not configured: keep a copy so the studio can show what would have been sent.
