@@ -1,4 +1,4 @@
-# Aditi Rane &mdash; Photography Portfolio, Client Portal &amp; Studio Automation
+# Ritesh Farswan &mdash; Photography Portfolio, Client Portal &amp; Studio Automation
 
 A business-ready, dual-site web platform and Python automation suite designed for a professional documentary and portrait photographer.
 
@@ -125,8 +125,8 @@ window.SITE_CONFIG = {
     templateId: 'your_template_id'
   },
   owner: {
-    name: 'Aditi Rane',
-    email: 'studio@aditirane.com',
+    name: 'Ritesh Farswan',
+    email: 'studio@riteshfarswan.com',
     phone: '+91 98200 41736',
     city: 'Mumbai'
   }

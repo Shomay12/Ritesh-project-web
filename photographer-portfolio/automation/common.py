@@ -108,8 +108,8 @@ class Settings:
 @lru_cache(maxsize=1)
 def settings() -> Settings:
     """Load non-secret settings with sensible defaults."""
-    owner_name = env("OWNER_NAME", "Aditi Rane")
-    site_url = env("SITE_URL", "https://aditirane.com").rstrip("/")
+    owner_name = env("OWNER_NAME", "Ritesh Farswan")
+    site_url = env("SITE_URL", "https://riteshfarswan.com").rstrip("/")
     portal = env("CLIENT_PORTAL_URL", f"{site_url}/client/")
     if not portal.endswith("/"):
         portal += "/"

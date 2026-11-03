@@ -1,12 +1,12 @@
 # Studio Platform Audit & Engineering Report
-**Monograph & Archival System for Aditi Rane Photography**
+**Monograph & Archival System for Ritesh Farswan Photography**
 *Mumbai & Worldwide &middot; Edition 2025.1*
 
 ---
 
 ## Executive Overview & Brand Identity
 
-The **Aditi Rane Photography** web platform was engineered to reject contemporary web design monoculture—specifically the sterile, formulaic aesthetics of AI-generated templates and generic modern corporate portfolios. Built for an international documentary and portrait photographer, the platform presents photography with the restraint, tactile warmth, and permanence of an archival print monograph published by *Aperture* or *Steidl*.
+The **Ritesh Farswan Photography** web platform was engineered to reject contemporary web design monoculture—specifically the sterile, formulaic aesthetics of AI-generated templates and generic modern corporate portfolios. Built for an international documentary and portrait photographer, the platform presents photography with the restraint, tactile warmth, and permanence of an archival print monograph published by *Aperture* or *Steidl*.
 
 ```
    +--------------------------------------------------------------------------+
@@ -35,7 +35,7 @@ The **Aditi Rane Photography** web platform was engineered to reject contemporar
 
 Modern algorithmic website builders and AI tools share recognizable design artifacts that signal synthetic origins. This platform was architected with an explicit counter-aesthetic:
 
-| Design Dimension | Algorithmic / AI-Generated Tropes | Aditi Rane Studio Architecture |
+| Design Dimension | Algorithmic / AI-Generated Tropes | Ritesh Farswan Studio Architecture |
 | :--- | :--- | :--- |
 | **Color Science** | Electric purple/cyan gradients, saturated primary blues, harsh `#000000` / `#ffffff` contrasts | Tactile archival linen (`#F6F3ED`), deep carbon ink (`#161513`), darkroom amber safelight (`#12100E`, `#CF714C`) |
 | **Typography** | Generic sans-serifs (Inter, Roboto) paired with exaggerated bold sans headlines | Editorial pair: *Cormorant Garamond* (poetic classical serif with high-contrast italics) & *Jost* (warm geometric grotesque) |

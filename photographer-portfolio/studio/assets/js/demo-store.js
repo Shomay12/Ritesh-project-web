@@ -107,7 +107,7 @@
           status: 'new', deposit_paid: false, quoted_amount: null, internal_notes: null, confirmed_at: null, reminder_sent_at: null, followup_sent_at: null }
       ],
       messages: [
-        { id: 'm1', created_at: isoTime(-3), name: 'Ananya Iyer', email: 'ananya.iyer@example.com', subject: 'Album reprint', message: 'Hi Aditi, my parents would like a smaller copy of our album. Is that possible, and roughly what would it cost?', is_read: false },
+        { id: 'm1', created_at: isoTime(-3), name: 'Ananya Iyer', email: 'ananya.iyer@example.com', subject: 'Album reprint', message: 'Hi Ritesh, my parents would like a smaller copy of our album. Is that possible, and roughly what would it cost?', is_read: false },
         { id: 'm2', created_at: isoTime(-28), name: 'Vikram Shah', email: 'vikram@example.com', subject: 'Licensing one image', message: 'We would like to license the Ladakh frame for a hotel lobby print. Who should I speak to?', is_read: true }
       ],
       galleries: [

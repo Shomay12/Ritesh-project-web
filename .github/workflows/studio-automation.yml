@@ -41,11 +41,11 @@ jobs:
           EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
           EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
           EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
-          OWNER_NAME: ${{ secrets.OWNER_NAME || 'Aditi Rane' }}
+          OWNER_NAME: ${{ secrets.OWNER_NAME || 'Ritesh Farswan' }}
           OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
           OWNER_PHONE: ${{ secrets.OWNER_PHONE }}
-          SITE_URL: ${{ secrets.SITE_URL || 'https://aditirane.com' }}
-          CLIENT_PORTAL_URL: ${{ secrets.CLIENT_PORTAL_URL || 'https://aditirane.com/client/' }}
+          SITE_URL: ${{ secrets.SITE_URL || 'https://riteshfarswan.com' }}
+          CLIENT_PORTAL_URL: ${{ secrets.CLIENT_PORTAL_URL || 'https://riteshfarswan.com/client/' }}
           TIMEZONE: ${{ secrets.TIMEZONE || 'Asia/Kolkata' }}
           DRY_RUN: 'false'
         run: |

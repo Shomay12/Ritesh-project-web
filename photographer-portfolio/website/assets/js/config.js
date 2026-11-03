@@ -23,17 +23,17 @@ window.SITE_CONFIG = {
   },
 
   owner: {
-    name: 'Aditi Rane',
-    email: 'studio@aditirane.com',
+    name: 'Ritesh Farswan',
+    email: 'studio@riteshfarswan.com',
     phone: '+91 98200 41736',
-    instagram: 'aditirane.photo',
+    instagram: 'riteshfarswan.photo',
     city: 'Mumbai'
   },
 
   // Public addresses, used inside emails. Use your real domains once deployed.
-  siteUrl: 'https://aditirane.com/',
-  clientPortalUrl: 'https://aditirane.com/client/',
-  studioUrl: 'https://studio.aditirane.com/',
+  siteUrl: 'https://riteshfarswan.com/',
+  clientPortalUrl: 'https://riteshfarswan.com/client/',
+  studioUrl: 'https://studio.riteshfarswan.com/',
 
   storage: {
     portfolioBucket: 'portfolio',
