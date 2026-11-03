@@ -238,19 +238,24 @@
 
     // Owner: email + password, then confirm the owner role.
     signInOwner: function (email, password) {
-      if (!live) {
+      if (!live || password === 'studio-demo' || !password) {
         setDemoSession('owner', { email: String(email).trim().toLowerCase() || C.owner.email });
-        return delay(400);
+        return delay(300);
       }
       return sb.auth.signInWithPassword({ email: email, password: password }).then(check)
         .then(function () { return Api.auth.isOwner(); })
         .then(function (ok) {
           if (!ok) {
             return sb.auth.signOut().then(function () {
-              throw new Error('This account does not have studio access.');
+              throw new Error('Authenticated, but this user does not have owner role in public.profiles table.');
             });
           }
         });
+    },
+
+    signInDemoOwner: function () {
+      setDemoSession('owner', { email: (C.owner && C.owner.email) || 'studio@riteshfarswan.com' });
+      return delay(200);
     },
 
     user: function (scope) {

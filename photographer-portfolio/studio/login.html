@@ -24,17 +24,20 @@
 
       <div class="field">
         <label for="ownerPassword" style="color: #a39c91;">Password</label>
-        <input type="password" id="ownerPassword" name="password" placeholder="Leave empty in demo mode" style="background: #141312; border-color: #38342f; color: #f7f5f0;">
+        <input type="password" id="ownerPassword" name="password" placeholder="Enter Supabase password, or leave empty for demo" style="background: #141312; border-color: #38342f; color: #f7f5f0;">
       </div>
 
-      <div style="margin-top: 28px;">
+      <div style="margin-top: 28px; display: flex; flex-direction: column; gap: 12px;">
         <button type="submit" class="btn btn--solid" id="loginBtn" style="width: 100%; background: #f7f5f0; color: #141312;">Sign In to Studio &rarr;</button>
+        <button type="button" class="btn" id="demoSignInBtn" style="width: 100%; border-color: #38342f; color: #a39c91; font-size: 13px;">Instant Preview (Demo Access) &rarr;</button>
       </div>
 
       <div id="loginStatus" style="font-size: 13px; color: #e57373; margin-top: 16px; min-height: 18px;"></div>
 
-      <div id="demoHint" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #2b2824; font-size: 12px; color: #8c857b; line-height: 1.5;">
-        <strong>Demo Mode:</strong> Supabase credentials are empty. Clicking &ldquo;Sign In to Studio&rdquo; enters the full management portal with mock data.
+      <div id="demoHint" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #2b2824; font-size: 12px; color: #8c857b; line-height: 1.6;">
+        <strong>Studio Access Notes:</strong><br>
+        &bull; <strong>Instant Access:</strong> Click &ldquo;Instant Preview&rdquo; or leave the password blank to explore the studio dashboard immediately.<br>
+        &bull; <strong>Live Supabase Auth:</strong> To set your own password, add your email in the Supabase Dashboard under <em>Authentication &rarr; Users</em> and assign <code>role = 'owner'</code> in <code>public.profiles</code>.
       </div>
     </form>
   </div>
@@ -51,6 +54,7 @@
       var emailEl = document.getElementById('ownerEmail');
       var passEl = document.getElementById('ownerPassword');
       var btn = document.getElementById('loginBtn');
+      var demoBtn = document.getElementById('demoSignInBtn');
       var status = document.getElementById('loginStatus');
 
       Api.auth.user('owner').then(function(u) {
@@ -58,6 +62,14 @@
           window.location.href = 'index.html';
         }
       });
+
+      if (demoBtn) {
+        demoBtn.addEventListener('click', function() {
+          Api.auth.signInDemoOwner().then(function() {
+            window.location.href = 'index.html';
+          });
+        });
+      }
 
       form.addEventListener('submit', function(e) {
         e.preventDefault();
