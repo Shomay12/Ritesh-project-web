@@ -114,6 +114,30 @@
     return base + 'assets/audio/wedding-ambience.mp3';
   }
 
+  function applySavedTimestamp() {
+    if (!ambienceAudio) return;
+    try {
+      var saved = sessionStorage.getItem('studio_ambience_time') || localStorage.getItem('studio_ambience_time');
+      var time = parseFloat(saved || '0');
+      if (time > 0 && isFinite(time)) {
+        if (!ambienceAudio.duration || time < ambienceAudio.duration) {
+          ambienceAudio.currentTime = time;
+        }
+      }
+    } catch (e) {}
+  }
+
+  function saveCurrentTimestamp() {
+    if (!ambienceAudio) return;
+    try {
+      var cur = ambienceAudio.currentTime;
+      if (cur > 0 && isFinite(cur)) {
+        sessionStorage.setItem('studio_ambience_time', cur.toString());
+        localStorage.setItem('studio_ambience_time', cur.toString());
+      }
+    } catch (e) {}
+  }
+
   function initAmbienceAudio() {
     if (ambienceAudio) return ambienceAudio;
     var existing = document.getElementById('studioAmbientAudio');
@@ -134,6 +158,23 @@
       ambienceAudio.volume = ambienceTargetVolume;
       ambienceAudio.preload = 'auto';
 
+      ambienceAudio.addEventListener('timeupdate', function () {
+        saveCurrentTimestamp();
+      });
+
+      ambienceAudio.addEventListener('loadedmetadata', function () {
+        applySavedTimestamp();
+      });
+
+      ambienceAudio.addEventListener('canplay', function () {
+        if (ambienceAudio.currentTime === 0) {
+          applySavedTimestamp();
+        }
+      });
+
+      window.addEventListener('beforeunload', saveCurrentTimestamp);
+      window.addEventListener('pagehide', saveCurrentTimestamp);
+
       ambienceAudio.addEventListener('error', function () {
         var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
         var fallbackPath = (isClientSubdir ? '../../' : '../') + 'music/Maangal%20%E0%A4%AE%E0%A4%BE%E0%A4%81%E0%A4%97%E0%A4%B2%20Traditional%20Wedding%20Songs%20Pandavaas.mp3';
@@ -141,6 +182,7 @@
           ambienceAudio.src = fallbackPath;
           if (ambienceEnabled) {
             ambienceAudio.volume = ambienceTargetVolume;
+            applySavedTimestamp();
             ambienceAudio.play().catch(function () {});
           }
         }
@@ -154,10 +196,12 @@
     if (!ambienceAudio) return;
     ambienceAudio.loop = true;
     ambienceAudio.volume = ambienceTargetVolume;
+    applySavedTimestamp();
 
     var promise = ambienceAudio.play();
     if (promise !== undefined) {
       promise.then(function () {
+        applySavedTimestamp();
         updateAmbienceButtons(true);
       }).catch(function () {
         // Browser autoplay policy requires user gesture; start on first interaction with webpage
@@ -165,6 +209,7 @@
         function unlockOnInteraction() {
           if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
             ambienceAudio.volume = ambienceTargetVolume;
+            applySavedTimestamp();
             ambienceAudio.play().then(function () {
               updateAmbienceButtons(true);
             }).catch(function () {});
@@ -614,12 +659,133 @@
   }
 
   /* -------------------------------------------------------------------
+     13. Seamless Page Transitions for Uninterrupted Background Music
+     ------------------------------------------------------------------- */
+  function initSeamlessNavigation() {
+    if (window._seamlessNavInitialized) return;
+    window._seamlessNavInitialized = true;
+
+    if (!window.history || !window.history.pushState || !window.DOMParser) return;
+
+    function isEligible(anchor) {
+      if (!anchor || anchor.tagName !== 'A') return false;
+      var href = anchor.getAttribute('href');
+      if (!href) return false;
+      if (anchor.target && anchor.target !== '_self') return false;
+      if (anchor.hasAttribute('download')) return false;
+      if (href.indexOf(':') !== -1 && href.indexOf('http') !== 0) return false; // mailto, tel, etc.
+      if (href.charAt(0) === '#') return false;
+
+      try {
+        var target = new URL(href, window.location.href);
+        if (target.origin !== window.location.origin) return false;
+
+        // Exclude studio backend, client portal sub-app, and binary downloads
+        var path = target.pathname;
+        if (path.indexOf('/studio/') !== -1 || path.indexOf('/client/') !== -1) return false;
+        if (path.endsWith('.zip') || path.endsWith('.mp3') || path.endsWith('.pdf')) return false;
+
+        return target.href !== window.location.href;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function navigateTo(url, push) {
+      var mainEl = document.getElementById('main');
+      if (!mainEl) {
+        window.location.href = url;
+        return;
+      }
+
+      saveCurrentTimestamp();
+      mainEl.style.opacity = '0.4';
+      mainEl.style.transition = 'opacity 0.18s ease';
+
+      fetch(url)
+        .then(function (res) {
+          if (!res.ok) throw new Error('Status ' + res.status);
+          return res.text();
+        })
+        .then(function (html) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, 'text/html');
+          var newMain = doc.getElementById('main');
+          if (!newMain) {
+            window.location.href = url;
+            return;
+          }
+
+          if (doc.title) {
+            document.title = doc.title;
+          }
+
+          mainEl.innerHTML = newMain.innerHTML;
+          mainEl.style.opacity = '1';
+
+          if (push) {
+            window.history.pushState({ url: url }, doc.title || '', url);
+          }
+
+          var targetPath = new URL(url, window.location.href).pathname.split('/').pop() || 'index.html';
+          var navLinks = document.querySelectorAll('.nav a, .mobile-menu nav a');
+          navLinks.forEach(function (a) {
+            var aHref = (a.getAttribute('href') || '').split('#')[0].split('?')[0];
+            if (aHref === targetPath || (targetPath === '' && aHref === 'index.html')) {
+              a.setAttribute('aria-current', 'page');
+            } else {
+              a.removeAttribute('aria-current');
+            }
+          });
+
+          var mobileMenu = document.getElementById('mobileMenu');
+          var menuToggle = document.getElementById('menuToggle');
+          if (mobileMenu && mobileMenu.classList.contains('is-open')) {
+            mobileMenu.classList.remove('is-open');
+            if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('no-scroll');
+          }
+
+          window.scrollTo(0, 0);
+
+          // Re-initialize modules on swapped DOM
+          initModules();
+
+          // Execute page-specific inline scripts if present in new main
+          var scripts = newMain.querySelectorAll('script');
+          scripts.forEach(function (s) {
+            try {
+              var runScript = new Function(s.textContent);
+              runScript();
+            } catch (err) {
+              console.warn('Script execution notice:', err);
+            }
+          });
+        })
+        .catch(function () {
+          window.location.href = url;
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+      var anchor = e.target.closest('a');
+      if (anchor && isEligible(anchor)) {
+        e.preventDefault();
+        navigateTo(anchor.href, true);
+      }
+    });
+
+    window.addEventListener('popstate', function () {
+      navigateTo(window.location.href, false);
+    });
+  }
+
+  /* -------------------------------------------------------------------
      DOM Ready Boot
      ------------------------------------------------------------------- */
-  function init() {
+  function initModules() {
     initStudioClock();
     initSoundToggle();
-    initAmbienceToggle();
     initDarkroomToggle();
     initFilmStockSelector();
     initLensSimulator();
@@ -630,6 +796,12 @@
     initWorkViewSwitcher();
     initLightboxLoupe();
     initStudioLinks();
+  }
+
+  function init() {
+    initModules();
+    initAmbienceToggle();
+    initSeamlessNavigation();
   }
 
   if (document.readyState === 'loading') {

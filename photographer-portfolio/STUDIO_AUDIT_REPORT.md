@@ -237,5 +237,5 @@ Designed, architected, and built by **Shomay Singh Parihar**:
 - **GitHub:** [@Shomay12 (github.com/shomay12)](https://github.com/Shomay12)
 - **Portfolio & Systems:** [shomaysinghparihar.online](https://shomaysinghparihar.online)
 - **X / Twitter:** [@KJshomayyy](https://x.com/KJshomayyy)
+- **Email:** [shomaysinghparihar@gmail.com](mailto:shomaysinghparihar@gmail.com)
 - **Platform Developer Documentation:** Available in-app at [`developer.html`](photographer-portfolio/website/developer.html)
-- **Focus Areas:** AI Engineering, Machine Learning, Retrieval-Augmented Generation (RAG), Full-Stack Systems, and Predictive Telemetry.

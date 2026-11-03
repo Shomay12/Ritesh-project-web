@@ -198,8 +198,8 @@ Designed and engineered by **Shomay Singh Parihar** ([@Shomay12](https://github.
 - **GitHub Profile:** [github.com/shomay12](https://github.com/shomay12)
 - **Personal Portfolio:** [shomaysinghparihar.online](https://shomaysinghparihar.online)
 - **X / Twitter:** [@KJshomayyy](https://x.com/KJshomayyy)
+- **Email:** [shomaysinghparihar@gmail.com](mailto:shomaysinghparihar@gmail.com)
 - **Developer Page:** [`photographer-portfolio/website/developer.html`](photographer-portfolio/website/developer.html) / `developer.html` on live deployment
-- **Featured Systems:** UniAssist (RAG & FAISS), Industrial Machine Monitoring (IoT & Random Forest), Finance Expenditure Intelligence (Isolation Forests & Time-Series), HotTea (Privacy-First Flutter/Local LLM Browser), Duezy (AI Payment Automation), and Ritesh Photography Platform & Studio Suite.
 
 
 

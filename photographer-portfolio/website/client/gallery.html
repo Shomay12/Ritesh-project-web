@@ -94,6 +94,7 @@
           <button type="button" class="btn btn--solid" id="downloadZipBtn" style="min-height: 42px; padding: 0 22px;">
             <span>Download All (ZIP) &darr;</span>
           </button>
+          <button type="button" class="btn btn--small" id="toolbarSignOutBtn" style="font-size: 11px; padding: 6px 14px; min-height: 32px;">Sign Out</button>
         </div>
       </div>
       <div class="progress" id="zipProgress"><span id="zipProgressBar"></span></div>
@@ -158,6 +159,26 @@
       var menu = document.getElementById('mobileMenu');
       if (toggle) toggle.addEventListener('click', function() { menu.classList.add('is-open'); });
       if (close) close.addEventListener('click', function() { menu.classList.remove('is-open'); });
+
+      // Immediate synchronous Sign Out binding
+      function handleGallerySignOut(e) {
+        if (e) e.preventDefault();
+        var btns = document.querySelectorAll('#gallerySignOutBtn, #mobileSignOutBtn, #toolbarSignOutBtn');
+        btns.forEach(function(b) {
+          b.disabled = true;
+          b.textContent = 'Signing out...';
+        });
+        Api.auth.signOut('client').finally(function() {
+          window.location.href = 'index.html';
+        });
+      }
+
+      var gBtn = document.getElementById('gallerySignOutBtn');
+      var mBtn = document.getElementById('mobileSignOutBtn');
+      var tBtn = document.getElementById('toolbarSignOutBtn');
+      if (gBtn) gBtn.addEventListener('click', handleGallerySignOut);
+      if (mBtn) mBtn.addEventListener('click', handleGallerySignOut);
+      if (tBtn) tBtn.addEventListener('click', handleGallerySignOut);
 
       var params = new URLSearchParams(window.location.search);
       var galleryId = params.get('id') || 'g1';
@@ -509,17 +530,6 @@
 
         updateCounts();
         renderGrid();
-
-        function handleGallerySignOut(e) {
-          if (e) e.preventDefault();
-          Api.auth.signOut('client').finally(function() {
-            window.location.href = 'index.html';
-          });
-        }
-        var gBtn = document.getElementById('gallerySignOutBtn');
-        var mBtn = document.getElementById('mobileSignOutBtn');
-        if (gBtn) gBtn.addEventListener('click', handleGallerySignOut);
-        if (mBtn) mBtn.addEventListener('click', handleGallerySignOut);
       }).catch(function(err) {
         console.error('Gallery loading failed:', err);
         titleEl.textContent = 'Gallery not available';

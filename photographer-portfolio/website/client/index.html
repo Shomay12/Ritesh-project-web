@@ -41,6 +41,7 @@
         <a href="../booking.html">Check Dates</a>
         <a href="../developer.html">Developer</a>
         <a href="index.html" aria-current="page">Client Portal</a>
+        <button type="button" class="btn btn--small" id="headerSignOutBtn" style="display: none; margin-left: 14px; font-size: 11px; padding: 4px 14px; min-height: 28px;">Sign Out</button>
       </nav>
       <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
     </div>
@@ -57,6 +58,7 @@
       <a href="../booking.html">Check Dates</a>
       <a href="../developer.html">Developer</a>
       <a href="index.html" aria-current="page">Client Portal</a>
+      <button type="button" id="mobileDrawerSignOutBtn" style="display: none; width: 100%; text-align: left; padding: 14px 0; color: #cf714c; font: inherit; background: none; border: 0; cursor: pointer; border-top: 1px solid var(--line); margin-top: 12px;">Sign Out &rarr;</button>
     </nav>
   </div>
 
@@ -77,13 +79,14 @@
             <span class="error" id="emailError"></span>
           </div>
 
-          <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
-            <button type="submit" class="btn btn--solid" id="loginBtn">
+          <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 12px;">
+            <button type="submit" class="btn btn--solid" id="loginBtn" style="min-height: 48px; width: 100%; justify-content: center;">
               <span>Request Access Link &rarr;</span>
             </button>
-            <button type="button" class="btn" id="instantAccessBtn" style="border: 1px solid var(--line); font-size: 13px;">
-              <span>Instant Client Preview (Bypass Email Limit) &rarr;</span>
+            <button type="button" class="btn" id="instantAccessBtn" style="border: 1px solid var(--line); min-height: 44px; width: 100%; justify-content: center; font-size: 13px;">
+              <span>Instant Demo Preview &rarr;</span>
             </button>
+            <p style="font-size: 12px; color: var(--muted); margin: 0; text-align: center;">Direct preview bypass for instant gallery inspection without Supabase email limits.</p>
           </div>
           <div id="loginStatus" class="form-status"></div>
         </form>
@@ -108,14 +111,20 @@
     </div>
 
     <!-- Authenticated State: Client Galleries Index -->
-    <div id="galleriesView" class="wrap" style="display: none; padding-top: 60px;">
-      <div class="section-head">
-        <div>
-          <span class="label">Signed In As <span id="userEmailSpan"></span></span>
-          <h1 style="font-size: clamp(38px, 5vw, 72px);">Your Private <em>Collections</em></h1>
+    <div id="galleriesView" class="wrap" style="display: none; padding-top: 40px; padding-bottom: 80px;">
+      <!-- Mobile and Desktop Account Bar -->
+      <div class="client-account-bar">
+        <div class="account-pill">
+          <span class="account-pulse"></span>
+          <span>Signed in as <strong id="userEmailSpan"></strong></span>
         </div>
+        <button type="button" class="btn btn--small btn--solid" id="signOutBtn" style="font-size: 11px; padding: 6px 18px; min-height: 32px;">Sign Out</button>
+      </div>
+
+      <div class="section-head" style="margin-top: 24px; margin-bottom: 36px;">
         <div>
-          <button type="button" class="btn" id="signOutBtn">Sign Out</button>
+          <span class="label">Client Deliverable Archive</span>
+          <h1 style="font-size: clamp(34px, 5.2vw, 68px); margin-top: 8px;">Your Private <em>Collections</em></h1>
         </div>
       </div>
 
@@ -145,27 +154,57 @@
       var userEmailSpan = document.getElementById('userEmailSpan');
       var galleryList = document.getElementById('galleryList');
       var signOutBtn = document.getElementById('signOutBtn');
+      var headerSignOutBtn = document.getElementById('headerSignOutBtn');
+      var mobileDrawerSignOutBtn = document.getElementById('mobileDrawerSignOutBtn');
       var demoNotice = document.getElementById('demoNotice');
 
       if (!Api.live) {
         demoNotice.style.display = 'block';
       }
 
+      function updateAuthUI(isAuth, email) {
+        if (headerSignOutBtn) headerSignOutBtn.style.display = isAuth ? 'inline-block' : 'none';
+        if (mobileDrawerSignOutBtn) mobileDrawerSignOutBtn.style.display = isAuth ? 'block' : 'none';
+        if (userEmailSpan && email) userEmailSpan.textContent = email;
+      }
+
+      function handleClientSignOut(e) {
+        if (e) e.preventDefault();
+        var btns = document.querySelectorAll('#signOutBtn, #headerSignOutBtn, #mobileDrawerSignOutBtn');
+        btns.forEach(function(b) {
+          b.disabled = true;
+          b.textContent = 'Signing out...';
+        });
+        Api.auth.signOut('client').finally(function() {
+          window.location.href = 'index.html';
+        });
+      }
+
+      if (signOutBtn) signOutBtn.addEventListener('click', handleClientSignOut);
+      if (headerSignOutBtn) headerSignOutBtn.addEventListener('click', handleClientSignOut);
+      if (mobileDrawerSignOutBtn) mobileDrawerSignOutBtn.addEventListener('click', handleClientSignOut);
+
       function checkSession() {
         Api.auth.user('client').then(function(user) {
           if (user && user.email) {
+            updateAuthUI(true, user.email);
             showGalleries(user.email);
           } else {
+            updateAuthUI(false, '');
             loginView.style.display = 'grid';
             galleriesView.style.display = 'none';
           }
+        }).catch(function() {
+          updateAuthUI(false, '');
+          loginView.style.display = 'grid';
+          galleriesView.style.display = 'none';
         });
       }
 
       function showGalleries(email) {
+        updateAuthUI(true, email);
         loginView.style.display = 'none';
         galleriesView.style.display = 'block';
-        userEmailSpan.textContent = email;
 
         Api.portal.galleries().then(function(galleries) {
           galleryList.innerHTML = '';
@@ -180,15 +219,21 @@
             var coverImg = g.coverUrl || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1200';
 
             card.innerHTML =
-              '<a href="gallery.html?id=' + encodeURIComponent(g.id) + '">' +
-                '<div class="frame ratio-32">' +
+              '<a href="gallery.html?id=' + encodeURIComponent(g.id) + '" style="display: block; text-decoration: none;">' +
+                '<div class="frame ratio-32" style="position: relative; overflow: hidden; background: var(--paper-3);">' +
                   '<span class="frame-mark mark-tl">+</span>' +
-                  '<img src="' + Api.format.esc(coverImg) + '" alt="' + Api.format.esc(g.title) + '">' +
+                  '<span class="frame-mark mark-tr">+</span>' +
+                  '<span class="frame-mark mark-bl">+</span>' +
+                  '<span class="frame-mark mark-br">+</span>' +
+                  '<img src="' + Api.format.esc(coverImg) + '" alt="' + Api.format.esc(g.title) + '" style="width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease;">' +
                 '</div>' +
-                '<span class="t">' + Api.format.esc(g.title) + '</span>' +
-                '<div class="caption">' +
+                '<span class="t" style="display: block; margin-top: 14px; font: 400 clamp(24px, 2.5vw, 32px)/1.2 var(--serif); color: var(--ink);">' + Api.format.esc(g.title) + '</span>' +
+                '<div class="caption" style="margin-top: 6px; font-size: 13px; color: var(--muted);">' +
                   (g.event_date ? Api.format.longDate(g.event_date) : '') +
                   (g.client_name ? ' &middot; ' + Api.format.esc(g.client_name) : '') +
+                '</div>' +
+                '<div style="margin-top: 12px; font: 500 11.5px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--clay);">' +
+                  'View Gallery Proofs &rarr;' +
                 '</div>' +
               '</a>';
 
@@ -243,17 +288,6 @@
           loginStatus.textContent = err.message || 'Unable to send link. Please contact the studio.';
         });
       });
-
-      if (signOutBtn) {
-        signOutBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          signOutBtn.disabled = true;
-          signOutBtn.textContent = 'Signing out...';
-          Api.auth.signOut('client').finally(function() {
-            window.location.href = 'index.html';
-          });
-        });
-      }
 
       checkSession();
     })();
