@@ -213,55 +213,57 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
 }
 
 @media (max-width: 900px) {
-  :root { --header: auto; }
+  :root { --header: 56px; }
+  .studio-nav {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+  }
   .studio-nav .wrap {
-    flex-wrap: wrap;
-    height: auto;
-    padding-top: 14px;
-    padding-bottom: 12px;
+    height: 56px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
     gap: 12px;
   }
   .studio-brand {
-    font-size: 20px;
+    font-size: 19px;
+    white-space: nowrap;
+  }
+  .studio-brand span {
+    color: #8c857b;
+  }
+  /* Hide top desktop nav on mobile/tablet — bottom dock handles studio navigation */
+  .studio-links {
+    display: none !important;
   }
   .studio-right {
-    gap: 12px;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  .studio-search-bar {
+    display: none;
   }
   .studio-right a, .studio-right button {
     font-size: 11px;
-    padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 3px;
-  }
-  /* Horizontal scrollable nav tabs on iPad / Tablet and Mobile */
-  .studio-links {
-    display: flex !important;
-    order: 3;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    gap: 8px;
-    padding: 6px 0 2px;
-    scrollbar-width: none;
-  }
-  .studio-links::-webkit-scrollbar { display: none; }
-  .studio-links a {
-    white-space: nowrap;
-    padding: 8px 14px;
+    padding: 6px 10px;
     background: rgba(255, 255, 255, 0.06);
-    border-radius: 4px;
-    font-size: 11px;
-    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    white-space: nowrap;
   }
-  .studio-links a:hover, .studio-links a[aria-current="page"] {
-    background: #ffffff;
-    color: var(--dark-nav);
-    box-shadow: none;
+  .studio-right a:hover, .studio-right button:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
   }
 
   .view-head {
-    padding: 28px 0 20px;
-    gap: 16px;
+    padding: 24px 0 16px;
+    gap: 14px;
   }
 
   /* Table responsive horizontal scroll */
@@ -270,9 +272,10 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
     -webkit-overflow-scrolling: touch;
     border: 1px solid var(--line);
     background: #fff;
+    border-radius: 2px;
   }
   table.data-table {
-    min-width: 640px;
+    min-width: 620px;
   }
 
   .modal-box {
@@ -283,11 +286,23 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
 }
 
 @media (max-width: 620px) {
+  :root { --pad: 16px; }
+  .studio-brand {
+    font-size: 17px;
+  }
+  .studio-right a[href*="developer.html"] {
+    display: none; /* Keep mobile top header uncluttered on small screens */
+  }
+  .btn-install-app {
+    padding: 5px 8px;
+    font-size: 10px;
+    letter-spacing: .08em;
+  }
   .stats-strip {
     grid-template-columns: 1fr 1fr;
   }
   .stat-box {
-    padding: 16px 14px;
+    padding: 14px 16px;
   }
   .stat-box:nth-child(even) { border-right: 0; }
   .stat-box:nth-child(n+3) { border-top: 1px solid var(--line); }
@@ -296,23 +311,32 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
     border-right: 0;
   }
   .stat-val {
-    font-size: 28px;
+    font-size: 26px;
   }
   .view-head {
     flex-direction: column;
     align-items: flex-start;
+    padding: 20px 0 14px;
+    gap: 12px;
+  }
+  .view-head h1 {
+    font-size: clamp(26px, 6.5vw, 34px);
   }
   .view-actions {
     width: 100%;
     flex-direction: column;
+    gap: 8px;
   }
   .view-actions .btn {
     width: 100%;
+    text-align: center;
+    justify-content: center;
   }
   .tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     gap: 16px;
+    padding-bottom: 2px;
     scrollbar-width: none;
   }
   .tabs::-webkit-scrollbar { display: none; }
@@ -320,11 +344,20 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
     white-space: nowrap;
     flex-shrink: 0;
   }
+  .table-wrap {
+    margin-top: 12px;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  table.data-table {
+    min-width: 580px;
+  }
   .field input, .field select, .field textarea {
     font-size: 16px; /* Prevents auto-zoom in mobile Safari */
   }
   .upload-dropzone {
-    padding: 36px 16px;
+    padding: 32px 16px;
   }
   .queue-item {
     grid-template-columns: 50px 1fr 32px;
@@ -334,5 +367,259 @@ table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
     grid-column: 2;
     margin-top: 4px;
   }
+
+  /* Modal mobile alignment: single-column form grids and stacked actions */
+  .modal-box {
+    width: 95vw;
+    max-height: 90vh;
+    padding: 22px 16px 20px;
+  }
+  .modal-box [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .modal-box [style*="display: flex; justify-content: space-between"] {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+  .modal-box [style*="display: flex; justify-content: space-between"] > div {
+    flex-direction: column;
+    width: 100%;
+  }
+  .modal-box .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* EmailJS form stacking on mobile */
+  #emailjsConfigForm {
+    grid-template-columns: 1fr !important;
+  }
+  #emailjsConfigForm > div:last-child {
+    flex-direction: column;
+    width: 100%;
+  }
+  #emailjsConfigForm .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
+
+/* =====================================================================
+   Studio WebApp — Mobile App Navigation, PWA Shell & Notifications
+   ===================================================================== */
+
+/* Nav Badge */
+.studio-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  background: #cf714c;
+  color: #fff;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.studio-nav-badge.is-zero {
+  display: none;
+}
+
+/* Install App Button */
+.btn-install-app {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #2b2723, #1e1c1a);
+  border: 1px solid #4a443c;
+  color: #f7f5f0 !important;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font: 500 11px/1 var(--sans);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: all .2s ease;
+  cursor: pointer;
+}
+.btn-install-app:hover {
+  background: #cf714c;
+  border-color: #cf714c;
+  color: #fff !important;
+}
+
+/* Toast Notifications */
+.studio-toast-container {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: 360px;
+}
+.studio-toast {
+  background: #181614;
+  color: #f7f5f0;
+  border: 1px solid #3d3832;
+  border-left: 3px solid #cf714c;
+  padding: 12px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  font: 400 13.5px/1.4 var(--sans);
+  pointer-events: auto;
+  border-radius: 2px;
+  animation: studio-toast-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.studio-toast.toast--success {
+  border-left-color: #10b981;
+}
+.studio-toast.toast--error {
+  border-left-color: #ef4444;
+}
+@keyframes studio-toast-slide {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Mobile Bottom Navigation Bar */
+.studio-bottom-nav {
+  display: none;
+}
+@media (max-width: 900px) {
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .studio-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(22, 20, 18, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .studio-bottom-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: #8c857b;
+    font: 500 10px/1 var(--sans);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    position: relative;
+    transition: color .2s ease;
+    user-select: none;
+    text-decoration: none;
+  }
+  .studio-bottom-item svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    transition: transform .15s ease;
+  }
+  .studio-bottom-item.is-active,
+  .studio-bottom-item:active {
+    color: #f7f5f0;
+  }
+  .studio-bottom-item.is-active svg {
+    stroke: #cf714c;
+    transform: translateY(-1px);
+  }
+  .studio-bottom-badge {
+    position: absolute;
+    top: 6px;
+    right: calc(50% - 18px);
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: #cf714c;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  .studio-bottom-badge.is-zero {
+    display: none;
+  }
+}
+
+/* Quick Search Input in header */
+.studio-search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 4px 10px;
+  gap: 8px;
+  max-width: 200px;
+}
+.studio-search-bar input {
+  background: transparent;
+  border: 0;
+  color: #f7f5f0;
+  font: 400 12px/1 var(--sans);
+  width: 100%;
+  outline: none;
+}
+.studio-search-bar input::placeholder {
+  color: #736c64;
+}
+
+/* iOS PWA Install Guide Modal */
+.ios-install-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+  padding: 16px;
+}
+.ios-install-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+.ios-install-card {
+  background: #1c1a18;
+  border: 1px solid #33302b;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  color: #f7f5f0;
+  margin-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
 

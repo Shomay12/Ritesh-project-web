@@ -542,3 +542,4 @@ const output = `/* =============================================================
 
 fs.writeFileSync(path.join(base, 'assets', 'js', 'studio-pages.js'), output, 'utf8');
 console.log('Successfully generated studio-pages.js! Size:', output.length, 'bytes');
+

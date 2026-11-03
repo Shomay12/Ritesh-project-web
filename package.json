@@ -4,6 +4,9 @@
   "private": true,
   "description": "Ritesh Farswan Photography Web Platform & Studio Suite",
   "scripts": {
+    "start": "npx serve photographer-portfolio/website",
+    "studio": "npx serve photographer-portfolio/studio",
+    "dev": "npx serve photographer-portfolio",
     "supabase:login": "npx supabase login",
     "supabase:init": "npx supabase init",
     "supabase:link": "npx supabase link --project-ref dlqpdnhelisfxkpdkymv",

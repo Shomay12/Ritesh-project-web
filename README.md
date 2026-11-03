@@ -28,15 +28,19 @@ photographer-portfolio/
 │       ├── css/main.css         # Refined editorial typography & responsive grid
 │       └── js/                  # config.js, api.js, demo-store.js, creative-interactions.js, emails.js
 │
-├── studio/                      # Owner studio administration portal (second site)
+├── studio/                      # Installable Progressive Web App (PWA) for the studio owner
+│   ├── manifest.webmanifest     # Standalone PWA manifest, shortcuts & metadata
+│   ├── sw.js                    # Service worker with offline precaching & cache-first engine
 │   ├── login.html               # Owner authentication (email/password via Supabase Auth)
-│   ├── index.html               # Dashboard: metrics bar, recent enquiries, download logs
+│   ├── index.html               # WebApp Dashboard: live metrics, instant search, quick actions
 │   ├── bookings.html            # Manage enquiries, status transitions, quote amounts, notes
-│   ├── galleries.html           # Create, publish, unpublish, and copy links for client galleries
+│   ├── galleries.html           # Create, publish, 1-click WhatsApp copy link & PIN
 │   ├── upload.html              # Web upload center: EXIF transpose, auto-resizing, direct storage upload
 │   ├── portfolio.html           # Public portfolio curator (re-order, publish/hide, delete)
 │   ├── messages.html            # Incoming contact enquiries manager
-│   └── assets/css/studio.css    # Clean, distraction-free administration interface
+│   ├── assets/icons/            # PWA icons (192px, 512px, maskable, apple-touch-icon, SVG)
+│   ├── assets/js/studio-app.js  # PWA install prompt, bottom navigation dock, live badges, offline sync
+│   └── assets/css/studio.css    # Clean, distraction-free administration interface & mobile dock
 │
 ├── supabase/
 │   └── schema.sql               # Production PostgreSQL schema, Row Level Security, Storage buckets
