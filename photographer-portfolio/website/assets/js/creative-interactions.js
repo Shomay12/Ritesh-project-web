@@ -102,12 +102,11 @@
 
   /* -------------------------------------------------------------------
      1b. Traditional Wedding Ambient Background Music
-     Plays "Maangal Traditional Wedding Songs" in loop at ~35% volume.
+     Auto-plays in the webpage in continuous loop at 35% volume (30-40%).
      ------------------------------------------------------------------- */
   var ambienceAudio = null;
-  var ambienceEnabled = false;
+  var ambienceEnabled = true;
   var ambienceTargetVolume = 0.35; // 35% volume (within 30-40% range)
-  var ambienceFadeInterval = null;
 
   function resolveMusicPath() {
     var isClientSubdir = window.location.pathname.indexOf('/client/') !== -1;
@@ -132,7 +131,7 @@
     }
     if (ambienceAudio) {
       ambienceAudio.loop = true;
-      ambienceAudio.volume = 0;
+      ambienceAudio.volume = ambienceTargetVolume;
       ambienceAudio.preload = 'auto';
 
       ambienceAudio.addEventListener('error', function () {
@@ -141,9 +140,8 @@
         if (ambienceAudio && ambienceAudio.src && ambienceAudio.src.indexOf('wedding-ambience.mp3') !== -1) {
           ambienceAudio.src = fallbackPath;
           if (ambienceEnabled) {
-            ambienceAudio.play().then(function () {
-              fadeAudio(ambienceTargetVolume, 1000);
-            }).catch(function () {});
+            ambienceAudio.volume = ambienceTargetVolume;
+            ambienceAudio.play().catch(function () {});
           }
         }
       });
@@ -151,60 +149,42 @@
     return ambienceAudio;
   }
 
-  function fadeAudio(targetVol, durationMs, onDone) {
-    if (!ambienceAudio) return;
-    if (ambienceFadeInterval) clearInterval(ambienceFadeInterval);
-    var steps = 20;
-    var stepTime = durationMs / steps;
-    var startVol = ambienceAudio.volume;
-    var delta = targetVol - startVol;
-    var count = 0;
-
-    ambienceFadeInterval = setInterval(function () {
-      count++;
-      var current = startVol + delta * (count / steps);
-      ambienceAudio.volume = Math.max(0, Math.min(1, current));
-      if (count >= steps) {
-        clearInterval(ambienceFadeInterval);
-        ambienceFadeInterval = null;
-        ambienceAudio.volume = targetVol;
-        if (typeof onDone === 'function') onDone();
-      }
-    }, stepTime);
-  }
-
   function startAmbienceMusic() {
     initAmbienceAudio();
     if (!ambienceAudio) return;
     ambienceAudio.loop = true;
+    ambienceAudio.volume = ambienceTargetVolume;
+
     var promise = ambienceAudio.play();
     if (promise !== undefined) {
       promise.then(function () {
-        fadeAudio(ambienceTargetVolume, 1200);
+        updateAmbienceButtons(true);
       }).catch(function () {
-        // Autoplay policy prevented immediate playback; unlock on user's first gesture
-        function onGesture() {
+        // Browser autoplay policy requires user gesture; start on first interaction with webpage
+        var unlockEvents = ['click', 'pointerdown', 'touchstart', 'scroll', 'keydown'];
+        function unlockOnInteraction() {
           if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
+            ambienceAudio.volume = ambienceTargetVolume;
             ambienceAudio.play().then(function () {
-              fadeAudio(ambienceTargetVolume, 1200);
+              updateAmbienceButtons(true);
             }).catch(function () {});
           }
-          document.removeEventListener('click', onGesture);
-          document.removeEventListener('keydown', onGesture);
-          document.removeEventListener('touchstart', onGesture);
+          unlockEvents.forEach(function (evt) {
+            window.removeEventListener(evt, unlockOnInteraction, true);
+            document.removeEventListener(evt, unlockOnInteraction, true);
+          });
         }
-        document.addEventListener('click', onGesture, { once: true });
-        document.addEventListener('keydown', onGesture, { once: true });
-        document.addEventListener('touchstart', onGesture, { once: true });
+        unlockEvents.forEach(function (evt) {
+          window.addEventListener(evt, unlockOnInteraction, { capture: true, once: true });
+          document.addEventListener(evt, unlockOnInteraction, { capture: true, once: true });
+        });
       });
     }
   }
 
   function stopAmbienceMusic() {
     if (!ambienceAudio) return;
-    fadeAudio(0, 400, function () {
-      ambienceAudio.pause();
-    });
+    ambienceAudio.pause();
   }
 
   function updateAmbienceButtons(state) {
@@ -222,48 +202,16 @@
     });
   }
 
-  function isProductionHosting() {
-    try {
-      var proto = window.location.protocol;
-      var host = window.location.hostname;
-      // Never auto-play in coding editor previews, webviews, or local development
-      if (proto === 'file:' || proto.indexOf('webview') !== -1) return false;
-      if (!host || host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host.indexOf('.local') !== -1) return false;
-      // In editor iframe panels
-      if (window.self !== window.top) return false;
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   function initAmbienceToggle() {
     var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
-    if (!btns.length) return;
+    initAmbienceAudio();
 
-    var isLiveHosted = isProductionHosting();
     var saved = localStorage.getItem('studio_ambience_music');
-
-    // ONLY auto-play on live website hosting; NEVER in the local coding editor or file preview
-    if (isLiveHosted && saved !== 'off') {
-      initAmbienceAudio();
+    // Auto-play by default on the webpage unless the user explicitly turned it off
+    if (saved !== 'off') {
       ambienceEnabled = true;
       updateAmbienceButtons(true);
       startAmbienceMusic();
-      // Also register first interaction unlock for live site visitors
-      function autoUnlockOnFirstGesture() {
-        if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
-          ambienceAudio.play().then(function () {
-            fadeAudio(ambienceTargetVolume, 1200);
-          }).catch(function () {});
-        }
-        document.removeEventListener('click', autoUnlockOnFirstGesture);
-        document.removeEventListener('touchstart', autoUnlockOnFirstGesture);
-        document.removeEventListener('keydown', autoUnlockOnFirstGesture);
-      }
-      document.addEventListener('click', autoUnlockOnFirstGesture, { once: true });
-      document.addEventListener('touchstart', autoUnlockOnFirstGesture, { once: true });
-      document.addEventListener('keydown', autoUnlockOnFirstGesture, { once: true });
     } else {
       ambienceEnabled = false;
       updateAmbienceButtons(false);
