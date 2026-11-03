@@ -27,7 +27,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r automation/requirements.txt
+          if [ -d "photographer-portfolio/automation" ]; then
+            pip install -r photographer-portfolio/automation/requirements.txt
+          else
+            pip install -r automation/requirements.txt
+          fi
 
       - name: Run automation task(s)
         env:
@@ -45,6 +49,9 @@ jobs:
           TIMEZONE: ${{ secrets.TIMEZONE || 'Asia/Kolkata' }}
           DRY_RUN: 'false'
         run: |
+          if [ -d "photographer-portfolio/automation" ]; then
+            cd photographer-portfolio
+          fi
           if [ -n "${{ github.event.inputs.job }}" ]; then
             python automation/scheduler.py --job "${{ github.event.inputs.job }}"
           else
