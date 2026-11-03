@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Selected Work &mdash; Aditi Rane Photography</title>
+  <meta name="description" content="Weddings, portrait commissions, and visual monographs by Aditi Rane.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Archive &middot; 2022&ndash;2025 Monographs</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false" title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false" title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="index.html">Aditi Rane <span>Photography</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="work.html" aria-current="page">Selected Work</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services &amp; Investment</a>
+        <a href="booking.html">Check Dates &amp; Book</a>
+        <a href="contact.html">Contact</a>
+        <a class="nav-client" href="client/index.html">Client Portal &rarr;</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="index.html">Aditi Rane</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="work.html" aria-current="page">Selected Work</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services &amp; Investment</a>
+      <a href="booking.html">Check Dates &amp; Book</a>
+      <a href="contact.html">Contact</a>
+      <a href="client/index.html">Client Portal</a>
+    </nav>
+    <div class="mobile-menu-foot">
+      <p>Mumbai &middot; Available worldwide</p>
+      <p>studio@aditirane.com</p>
+    </div>
+  </div>
+
+  <main id="main">
+    <div class="wrap page-head">
+      <div class="page-head-row">
+        <div>
+          <span class="label">Archive &amp; Monograph Projects</span>
+          <h1>Selected <em>Photographs</em></h1>
+        </div>
+        <div>
+          <p class="lede" style="margin: 0; font-size: 22px;">
+            A continuous record of gatherings, private portraits, and landscapes from the Indian subcontinent.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <!-- Work Controls (Category Filters + View Mode Switcher) -->
+      <div class="work-controls">
+        <div class="filters" id="categoryFilters" role="tablist" aria-label="Filter work by category">
+          <button type="button" class="filter-btn" data-category="all" aria-pressed="true">All <sup>20</sup></button>
+          <button type="button" class="filter-btn" data-category="Weddings" aria-pressed="false">Weddings <sup>8</sup></button>
+          <button type="button" class="filter-btn" data-category="Portraits" aria-pressed="false">Portraits <sup>6</sup></button>
+          <button type="button" class="filter-btn" data-category="Editorial" aria-pressed="false">Editorial <sup>3</sup></button>
+          <button type="button" class="filter-btn" data-category="Places" aria-pressed="false">Places <sup>3</sup></button>
+        </div>
+
+        <div class="view-switcher" id="viewModeSwitcher" aria-label="Layout view switcher">
+          <span class="label" style="margin-right: 6px;">View:</span>
+          <button type="button" data-view="masonry" aria-pressed="true">Masonry</button>
+          <button type="button" data-view="contact-sheet" aria-pressed="false">Contact Sheet 35mm</button>
+          <button type="button" data-view="editorial" aria-pressed="false">Editorial Spread</button>
+        </div>
+      </div>
+
+      <!-- Film Emulsion Stock Emulation Bar -->
+      <div class="film-stock-bar" style="margin-top: 0; margin-bottom: 36px;">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <span class="label" style="margin: 0;">Film Emulsion:</span>
+          <div class="stock-btn-group" role="group" aria-label="Select photographic emulsion stock">
+            <button type="button" class="stock-btn" data-stock="portra" aria-pressed="true">Kodak Portra 400</button>
+            <button type="button" class="stock-btn" data-stock="trix" aria-pressed="false">Kodak Tri-X 400 (B&amp;W)</button>
+            <button type="button" class="stock-btn" data-stock="fuji" aria-pressed="false">Fujifilm Pro 400H</button>
+          </div>
+        </div>
+        <div class="stock-status">
+          <span>Active:</span>
+          <strong id="activeStockDisplay">Kodak Portra 400 (Warm Skin / Gold Shadows)</strong>
+        </div>
+      </div>
+
+      <!-- Masonry Grid of images -->
+      <div class="masonry view--masonry" id="workGrid" aria-live="polite">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- Lightbox Modal with Loupe Zoom -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photograph viewer">
+      <div class="lb-top">
+        <span class="lb-count" id="lbCount">01 / 20</span>
+        <div style="font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #8e877c;">
+          Click image to inspect with 2.2&times; loupe zoom
+        </div>
+        <button type="button" id="lbClose">Close [Esc]</button>
+      </div>
+      <div class="lb-stage">
+        <button type="button" class="lb-prev" id="lbPrev" aria-label="Previous photograph">&larr; Previous</button>
+        <img id="lbImg" src="" alt="">
+        <button type="button" class="lb-next" id="lbNext" aria-label="Next photograph">Next &rarr;</button>
+      </div>
+      <div class="lb-bottom">
+        <div class="lb-caption" id="lbCaption">Photograph title</div>
+        <div class="lb-actions">
+          <a class="text-link" id="lbInquire" href="booking.html">Inquire About This Style &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" style="margin-top: 100px;">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <h2>Aditi Rane <br><a href="booking.html">Inquire for 2025&ndash;2026</a></h2>
+        </div>
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="work.html">Portfolio</a></li>
+            <li><a href="about.html">About Aditi</a></li>
+            <li><a href="services.html">Services &amp; Pricing</a></li>
+            <li><a href="booking.html">Check Availability</a></li>
+            <li><a href="contact.html">General Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Client Access</h4>
+          <ul>
+            <li><a href="client/index.html">Client Portal</a></li>
+            <li><a href="client/index.html">Download High-Res</a></li>
+            <li><a href="client/index.html">Select Favorites</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li>Bandra West, Mumbai</li>
+            <li>+91 98200 41736</li>
+            <li>studio@aditirane.com</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; Aditi Rane Photography. All rights reserved.</div>
+        <div>Archival Documentary &amp; Portrait Photography</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/creative-interactions.js"></script>
+  <script>
+    (function() {
+      var items = [];
+      var activeFilter = 'all';
+      var activeIndex = 0;
+      var grid = document.getElementById('workGrid');
+      var filtersEl = document.getElementById('categoryFilters');
+
+      var lb = document.getElementById('lightbox');
+      var lbImg = document.getElementById('lbImg');
+      var lbCaption = document.getElementById('lbCaption');
+      var lbCount = document.getElementById('lbCount');
+      var lbClose = document.getElementById('lbClose');
+      var lbPrev = document.getElementById('lbPrev');
+      var lbNext = document.getElementById('lbNext');
+
+      function currentFiltered() {
+        if (activeFilter === 'all') return items;
+        return items.filter(function(item) { return item.category === activeFilter; });
+      }
+
+      function renderGrid() {
+        var visible = currentFiltered();
+        grid.innerHTML = '';
+        if (!visible.length) {
+          grid.innerHTML = '<div class="empty-note">No photographs in this category yet.</div>';
+          return;
+        }
+
+        visible.forEach(function(item, idx) {
+          var fig = document.createElement('figure');
+          fig.className = 'item curtain is-in tilt-frame';
+          var isLand = (item.width || 3) > (item.height || 2);
+          var ratioClass = isLand ? 'ratio-32' : 'ratio-45';
+          var frameNum = String(idx + 1).padStart(2, '0');
+
+          fig.innerHTML =
+            '<div class="frame ' + ratioClass + '">' +
+              '<span class="frame-mark mark-tl">+</span>' +
+              '<img src="' + Api.format.esc(item.thumb || item.src) + '" alt="' + Api.format.esc(item.title) + '" loading="lazy">' +
+            '</div>' +
+            '<figcaption>' +
+              '<span class="t">' + Api.format.esc(item.title) + (item.location ? ' &middot; <em>' + Api.format.esc(item.location) + '</em>' : '') + '</span>' +
+              '<span class="exif-tag">&#9650; ' + frameNum + ' &middot; ' + Api.format.esc(item.category) + (item.year ? ', ' + item.year : '') + '</span>' +
+            '</figcaption>';
+
+          var img = fig.querySelector('img');
+          img.onload = function() { img.classList.add('is-loaded'); };
+          if (img.complete) img.classList.add('is-loaded');
+
+          fig.addEventListener('click', function() {
+            openLightbox(idx);
+          });
+          grid.appendChild(fig);
+        });
+      }
+
+      function updateCounts() {
+        var counts = { all: items.length };
+        items.forEach(function(item) {
+          counts[item.category] = (counts[item.category] || 0) + 1;
+        });
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+          var cat = btn.getAttribute('data-category');
+          var count = counts[cat] || 0;
+          btn.innerHTML = (cat === 'all' ? 'All' : cat) + ' <sup>' + count + '</sup>';
+        });
+      }
+
+      function openLightbox(idx) {
+        var visible = currentFiltered();
+        if (!visible[idx]) return;
+        activeIndex = idx;
+        var item = visible[idx];
+
+        lbImg.classList.remove('is-loaded');
+        lbImg.src = item.src || item.image_path;
+        lbImg.alt = item.title;
+        lbImg.onload = function() { lbImg.classList.add('is-loaded'); };
+
+        lbCaption.innerHTML = Api.format.esc(item.title) +
+          (item.location ? ' &middot; <span>' + Api.format.esc(item.location) + '</span>' : '') +
+          (item.year ? ' &middot; <span>' + item.year + '</span>' : '');
+
+        lbCount.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(visible.length).padStart(2, '0');
+        lb.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+      }
+
+      function closeLightbox() {
+        lb.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+        var stage = document.querySelector('.lb-stage');
+        if (stage) stage.classList.remove('is-zoomed');
+        if (lbImg) lbImg.style.transform = '';
+      }
+
+      function nextPhoto() {
+        var visible = currentFiltered();
+        if (!visible.length) return;
+        activeIndex = (activeIndex + 1) % visible.length;
+        openLightbox(activeIndex);
+      }
+
+      function prevPhoto() {
+        var visible = currentFiltered();
+        if (!visible.length) return;
+        activeIndex = (activeIndex - 1 + visible.length) % visible.length;
+        openLightbox(activeIndex);
+      }
+
+      if (filtersEl) {
+        filtersEl.addEventListener('click', function(e) {
+          var btn = e.target.closest('.filter-btn');
+          if (!btn) return;
+          document.querySelectorAll('.filter-btn').forEach(function(b) { b.setAttribute('aria-pressed', 'false'); });
+          btn.setAttribute('aria-pressed', 'true');
+          activeFilter = btn.getAttribute('data-category');
+          renderGrid();
+        });
+      }
+
+      if (lbClose) lbClose.addEventListener('click', closeLightbox);
+      if (lbNext) lbNext.addEventListener('click', nextPhoto);
+      if (lbPrev) lbPrev.addEventListener('click', prevPhoto);
+
+      window.addEventListener('keydown', function(e) {
+        if (!lb.classList.contains('is-open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'ArrowLeft') prevPhoto();
+      });
+
+      Api.listPortfolio().then(function(loaded) {
+        items = loaded;
+        updateCounts();
+        renderGrid();
+      }).catch(function(err) {
+        console.error('Error loading portfolio:', err);
+      });
+    })();
+  </script>
+</body>
+</html>

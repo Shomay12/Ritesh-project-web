@@ -1,0 +1,53 @@
+name: Studio Daily Automation
+
+on:
+  schedule:
+    # 03:30 UTC = 09:00 IST (Asia/Kolkata)
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Specific job to run (leave empty for all except backup)'
+        required: false
+        default: ''
+
+jobs:
+  run-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r automation/requirements.txt
+
+      - name: Run automation task(s)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          OWNER_NAME: ${{ secrets.OWNER_NAME || 'Aditi Rane' }}
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
+          OWNER_PHONE: ${{ secrets.OWNER_PHONE }}
+          SITE_URL: ${{ secrets.SITE_URL || 'https://aditirane.com' }}
+          CLIENT_PORTAL_URL: ${{ secrets.CLIENT_PORTAL_URL || 'https://aditirane.com/client/' }}
+          TIMEZONE: ${{ secrets.TIMEZONE || 'Asia/Kolkata' }}
+          DRY_RUN: 'false'
+        run: |
+          if [ -n "${{ github.event.inputs.job }}" ]; then
+            python automation/scheduler.py --job "${{ github.event.inputs.job }}"
+          else
+            python automation/scheduler.py --once --skip backup
+          fi
+

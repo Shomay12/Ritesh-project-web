@@ -1,0 +1,210 @@
+/* =====================================================================
+   Aditi Rane — Studio Administration
+   Owner control portal
+   ===================================================================== */
+
+:root {
+  --paper: #f7f5f0;
+  --paper-2: #ede8df;
+  --paper-3: #e2dcd2;
+  --ink: #181715;
+  --ink-2: #383531;
+  --muted: #736c64;
+  --line: #d8d2c6;
+  --dark: #141312;
+  --dark-nav: #1b1917;
+  --accent: #242220;
+  --status-new: #8b5e34;
+  --status-confirmed: #346045;
+  --status-completed: #4a4843;
+  --status-cancelled: #8c3b3b;
+  --serif: 'Cormorant Garamond', 'Cormorant', Georgia, serif;
+  --sans: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  --pad: clamp(18px, 3.2vw, 48px);
+  --header: 68px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink-2);
+  font: 400 15px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--pad); }
+
+/* ---------- studio header ---------- */
+.studio-nav {
+  background: var(--dark-nav);
+  color: #c9c3b8;
+  border-bottom: 1px solid #2d2925;
+}
+.studio-nav .wrap {
+  display: flex; align-items: center; justify-content: space-between; height: var(--header);
+  gap: 20px;
+}
+.studio-brand {
+  font: 400 22px/1 var(--serif);
+  color: #f7f5f0;
+  letter-spacing: .02em;
+}
+.studio-brand span { font-style: italic; color: #8c857b; font-size: .8em; margin-left: 6px; }
+.studio-links { display: flex; align-items: center; gap: clamp(14px, 2vw, 28px); }
+.studio-links a {
+  font: 500 11px/1 var(--sans); letter-spacing: .15em; text-transform: uppercase;
+  color: #a39c91; padding: 8px 0; transition: color .2s;
+}
+.studio-links a:hover, .studio-links a[aria-current="page"] {
+  color: #ffffff; box-shadow: inset 0 -1px 0 #ffffff;
+}
+.studio-right { display: flex; align-items: center; gap: 20px; }
+.studio-right button, .studio-right a {
+  font: 500 11px/1 var(--sans); letter-spacing: .15em; text-transform: uppercase;
+  color: #8c857b; transition: color .2s;
+}
+.studio-right button:hover, .studio-right a:hover { color: #f7f5f0; }
+
+/* ---------- metrics bar ---------- */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--line);
+  background: #fbf9f6;
+}
+.stat-box {
+  padding: 24px var(--pad);
+  border-right: 1px solid var(--line);
+}
+.stat-box:last-child { border-right: 0; }
+.stat-val { font: 300 clamp(32px, 3.5vw, 48px)/1 var(--serif); color: var(--ink); margin-top: 8px; }
+.stat-lbl { font: 500 10.5px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- layout & headings ---------- */
+.view-head {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
+  padding: 44px 0 28px; border-bottom: 1px solid var(--line); flex-wrap: wrap;
+}
+.view-head h1 { font: 400 clamp(32px, 4vw, 48px)/1 var(--serif); color: var(--ink); margin: 0; }
+.view-actions { display: flex; gap: 14px; align-items: center; }
+
+.label {
+  font: 500 10.5px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+}
+.caption { font-size: 13px; color: var(--muted); }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 42px; padding: 0 20px;
+  border: 1px solid var(--ink);
+  font: 500 11px/1 var(--sans); letter-spacing: .15em; text-transform: uppercase;
+  color: var(--ink); background: transparent; transition: background .2s, color .2s;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn--solid { background: var(--ink); color: #fff; }
+.btn--solid:hover { background: var(--ink-2); }
+.btn--small { min-height: 32px; padding: 0 14px; font-size: 10px; }
+.btn--danger { border-color: var(--status-cancelled); color: var(--status-cancelled); }
+.btn--danger:hover { background: var(--status-cancelled); color: #fff; }
+
+/* ---------- table ---------- */
+.table-wrap { overflow-x: auto; margin-top: 24px; border-bottom: 1px solid var(--line); }
+table.data-table {
+  width: 100%; border-collapse: collapse; text-align: left;
+}
+table.data-table th {
+  padding: 12px 14px; font: 500 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); border-bottom: 1px solid var(--line); background: var(--paper-2);
+}
+table.data-table td {
+  padding: 16px 14px; font-size: 14px; border-bottom: 1px solid var(--line);
+  color: var(--ink); vertical-align: top;
+}
+table.data-table tr:hover td { background: rgba(0,0,0,0.015); }
+.cell-title { font: 400 17px/1.2 var(--serif); color: var(--ink); }
+.cell-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+/* ---------- badge ---------- */
+.badge {
+  display: inline-block; padding: 4px 10px;
+  font: 500 10px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+.badge--new { color: var(--status-new); }
+.badge--confirmed { color: var(--status-confirmed); }
+.badge--completed { color: var(--status-completed); }
+.badge--cancelled { color: var(--status-cancelled); }
+.badge--published { color: var(--status-confirmed); }
+.badge--draft { color: var(--muted); }
+.badge--archived { color: var(--status-completed); }
+
+/* ---------- filters / tabs ---------- */
+.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin-top: 24px; }
+.tabs button {
+  font: 500 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); padding: 12px 0; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s;
+}
+.tabs button:hover, .tabs button[aria-selected="true"] {
+  color: var(--ink); border-bottom-color: var(--ink);
+}
+
+/* ---------- form fields ---------- */
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.field label { font: 500 11px/1.3 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.field input, .field select, .field textarea {
+  font: 400 15px/1.5 var(--sans); color: var(--ink);
+  background: #fff; border: 1px solid var(--line); border-radius: 0;
+  padding: 10px 14px; width: 100%; transition: border-color .2s;
+}
+.field textarea { min-height: 120px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--ink);
+}
+
+/* ---------- modal ---------- */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(18, 17, 16, 0.65);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+}
+.modal-overlay.is-open { opacity: 1; visibility: visible; }
+.modal-box {
+  background: var(--paper); border: 1px solid var(--line);
+  width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto;
+  padding: clamp(24px, 4vw, 44px); position: relative;
+}
+.modal-box h2 { font: 400 32px/1.1 var(--serif); color: var(--ink); margin: 0 0 20px; }
+.modal-close { position: absolute; right: 24px; top: 24px; font: 500 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.modal-close:hover { color: var(--ink); }
+
+/* ---------- upload zone ---------- */
+.upload-dropzone {
+  border: 1px dashed var(--muted); background: #fff;
+  padding: 60px 24px; text-align: center; cursor: pointer; transition: background .2s, border-color .2s;
+}
+.upload-dropzone:hover, .upload-dropzone.drag-over {
+  border-color: var(--ink); background: var(--paper-2);
+}
+.upload-dropzone h3 { font: 400 24px/1.2 var(--serif); color: var(--ink); margin: 0 0 8px; }
+.upload-dropzone p { color: var(--muted); font-size: 14px; margin: 0; }
+
+.file-queue { margin-top: 32px; }
+.queue-item {
+  display: grid; grid-template-columns: 60px 1fr 100px 32px; gap: 16px; align-items: center;
+  padding: 12px 0; border-top: 1px solid var(--line);
+}
+.queue-thumb { width: 60px; height: 45px; object-fit: cover; background: var(--paper-3); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .stats-strip { grid-template-columns: 1fr 1fr; }
+  .studio-links { display: none; }
+}
+

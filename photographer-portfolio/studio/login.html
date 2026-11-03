@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Sign In &mdash; Aditi Rane Photography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body style="background: #141312; color: #cfc8be; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;">
+
+  <div style="background: #1e1c1a; border: 1px solid #33302b; padding: clamp(32px, 5vw, 56px); width: 100%; max-width: 440px;">
+    <div style="font: 400 28px/1 var(--serif); color: #f7f5f0; margin-bottom: 8px;">Aditi Rane <span style="font-style: italic; color: #8c857b; font-size: 0.75em;">Studio</span></div>
+    <div class="caption" style="color: #8c857b; margin-bottom: 32px;">Owner &amp; Studio Administration</div>
+
+    <form id="ownerLoginForm" novalidate>
+      <div class="field">
+        <label for="ownerEmail" style="color: #a39c91;">Studio Email</label>
+        <input type="email" id="ownerEmail" name="email" value="studio@aditirane.com" required style="background: #141312; border-color: #38342f; color: #f7f5f0;">
+      </div>
+
+      <div class="field">
+        <label for="ownerPassword" style="color: #a39c91;">Password</label>
+        <input type="password" id="ownerPassword" name="password" placeholder="Leave empty in demo mode" style="background: #141312; border-color: #38342f; color: #f7f5f0;">
+      </div>
+
+      <div style="margin-top: 28px;">
+        <button type="submit" class="btn btn--solid" id="loginBtn" style="width: 100%; background: #f7f5f0; color: #141312;">Sign In to Studio &rarr;</button>
+      </div>
+
+      <div id="loginStatus" style="font-size: 13px; color: #e57373; margin-top: 16px; min-height: 18px;"></div>
+
+      <div id="demoHint" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #2b2824; font-size: 12px; color: #8c857b; line-height: 1.5;">
+        <strong>Demo Mode:</strong> Supabase credentials are empty. Clicking &ldquo;Sign In to Studio&rdquo; enters the full management portal with mock data.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    (function() {
+      var form = document.getElementById('ownerLoginForm');
+      var emailEl = document.getElementById('ownerEmail');
+      var passEl = document.getElementById('ownerPassword');
+      var btn = document.getElementById('loginBtn');
+      var status = document.getElementById('loginStatus');
+
+      Api.auth.user('owner').then(function(u) {
+        if (u) {
+          window.location.href = 'index.html';
+        }
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+        status.textContent = '';
+
+        Api.auth.signInOwner(emailEl.value.trim(), passEl.value).then(function() {
+          window.location.href = 'index.html';
+        }).catch(function(err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.textContent = 'Sign In to Studio \u2192';
+          status.textContent = err.message || 'Invalid email or password.';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
+

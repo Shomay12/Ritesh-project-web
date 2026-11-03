@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aditi Rane &mdash; Documentary &amp; Portrait Photography</title>
+  <meta name="description" content="Weddings, solitary portraits, and quiet observations from the Indian subcontinent. Medium format digital and 35mm film.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Studio: Bandra West, Mumbai &middot; 18.9220&deg; N, 72.8347&deg; E</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false" title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false" title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="index.html">Aditi Rane <span>Photography</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="work.html">Selected Work</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services &amp; Investment</a>
+        <a href="booking.html">Check Dates &amp; Book</a>
+        <a href="contact.html">Contact</a>
+        <a class="nav-client" href="client/index.html">Client Portal &rarr;</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="index.html">Aditi Rane</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="work.html">Selected Work</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services &amp; Investment</a>
+      <a href="booking.html">Check Dates &amp; Book</a>
+      <a href="contact.html">Contact</a>
+      <a href="client/index.html">Client Portal</a>
+    </nav>
+    <div class="mobile-menu-foot">
+      <p>Mumbai &middot; Available across India and internationally</p>
+      <p>studio@aditirane.com</p>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- Hero Slider with Analog Frame Registration Marks -->
+    <section class="hero wrap" aria-label="Selected photographs">
+      <div class="hero-frame" id="heroFrame">
+        <!-- Technical Crosshairs (+) -->
+        <span class="frame-mark mark-tl">+</span>
+        <span class="frame-mark mark-tr">+</span>
+        <span class="frame-mark mark-bl">+</span>
+        <span class="frame-mark mark-br">+</span>
+
+        <div class="hero-slide is-active">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000" alt="Bride and groom walking through stone archway in Udaipur" width="2000" height="1333">
+        </div>
+        <div class="hero-slide">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=2000" alt="Natural afternoon light portrait in Bandra" width="2000" height="1333">
+        </div>
+        <div class="hero-slide">
+          <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=2000" alt="Early morning fog over Western Ghats" width="2000" height="1333">
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div class="exif-tag" id="heroCaption">Udaipur, Rajasthan &middot; 50mm f/1.8 &middot; 1/500s &middot; ISO 200</div>
+        <div class="hero-controls">
+          <button type="button" id="heroPrev">&larr; Previous</button>
+          <span class="hero-count" id="heroCount">01 / 03</span>
+          <button type="button" id="heroNext">Next &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Geographic Marquee Ticker -->
+    <div class="marquee-strip" style="margin-top: 48px;">
+      <div class="marquee-track">
+        <span>Mumbai &middot; 18.9220&deg; N</span>
+        <span>Udaipur &middot; Lake Palace</span>
+        <span>Jaipur &middot; Amer Haveli</span>
+        <span>Fort Kochi &middot; Malabar Coast</span>
+        <span>Goa &middot; South Coast</span>
+        <span>Vogue India Feature</span>
+        <span>Architectural Digest</span>
+        <span>Platform Magazine</span>
+        <span>Mumbai &middot; 18.9220&deg; N</span>
+        <span>Udaipur &middot; Lake Palace</span>
+        <span>Jaipur &middot; Amer Haveli</span>
+        <span>Fort Kochi &middot; Malabar Coast</span>
+        <span>Goa &middot; South Coast</span>
+      </div>
+    </div>
+
+    <!-- Studio Intro -->
+    <section class="section">
+      <div class="wrap intro">
+        <div class="intro-side">
+          <span class="label">The Studio Practice</span>
+          <div class="exif-tag" style="margin-top: 14px;">[120 MEDIUM FORMAT / 35MM PRIMES]</div>
+        </div>
+        <div>
+          <h1 class="lede">
+            I make photographs of marriages, solitary portraits, and places with long memory. The approach is deliberate, unobtrusive, and unhurried.
+          </h1>
+          <div class="intro-body">
+            <div>
+              <p>
+                A wedding is not a production set. My work centers on the quiet gestures between formal events&mdash;the mother holding a pallu, two cousins laughing behind the marquee, the fifteen unscripted minutes after the rituals when the dust settles.
+              </p>
+            </div>
+            <div>
+              <p>
+                Working with available light and medium format digital equipment, I deliver complete documentary records alongside curated albums bound in linen. Based in Mumbai; available wherever your gathering happens.
+              </p>
+              <p style="margin-top: 24px;">
+                <a class="link" href="about.html">Read full studio philosophy &rarr;</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 35mm Film Strip Continuous Reel -->
+    <section class="film-strip-wrap" aria-label="35mm film strip contact roll">
+      <div class="film-strip-header">
+        <div>35mm Film Contact Strip &middot; Kodak Portra 400 &middot; Safety Film</div>
+        <div>Drag to examine frames &rarr;</div>
+      </div>
+      <div class="film-strip-track" id="filmStripTrack">
+        <div class="film-frame-cell">
+          <div class="film-sprockets">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+          <div class="frame">
+            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800" alt="Roll frame 21" loading="lazy">
+          </div>
+          <div class="film-rebate-info">
+            <span>&#9650; 21</span>
+            <span>KODAK 400</span>
+            <span>21A</span>
+          </div>
+          <div class="film-sprockets" style="padding-top: 8px;">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+
+        <div class="film-frame-cell">
+          <div class="film-sprockets">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+          <div class="frame">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=800" alt="Roll frame 22" loading="lazy">
+          </div>
+          <div class="film-rebate-info">
+            <span>&#9650; 22</span>
+            <span>KODAK 400</span>
+            <span>22A</span>
+          </div>
+          <div class="film-sprockets" style="padding-top: 8px;">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+
+        <div class="film-frame-cell">
+          <div class="film-sprockets">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+          <div class="frame">
+            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800" alt="Roll frame 23" loading="lazy">
+          </div>
+          <div class="film-rebate-info">
+            <span>&#9650; 23</span>
+            <span>KODAK 400</span>
+            <span>23A</span>
+          </div>
+          <div class="film-sprockets" style="padding-top: 8px;">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+
+        <div class="film-frame-cell">
+          <div class="film-sprockets">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+          <div class="frame">
+            <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=800" alt="Roll frame 24" loading="lazy">
+          </div>
+          <div class="film-rebate-info">
+            <span>&#9650; 24</span>
+            <span>KODAK 400</span>
+            <span>24A</span>
+          </div>
+          <div class="film-sprockets" style="padding-top: 8px;">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+
+        <div class="film-frame-cell">
+          <div class="film-sprockets">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+          <div class="frame">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800" alt="Roll frame 25" loading="lazy">
+          </div>
+          <div class="film-rebate-info">
+            <span>&#9650; 25</span>
+            <span>KODAK 400</span>
+            <span>25A</span>
+          </div>
+          <div class="film-sprockets" style="padding-top: 8px;">
+            <span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span><span class="sprocket"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Works Grid with 3D Tilt Perspective -->
+    <section class="section section--tint" aria-label="Curated works">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="label">Curated Selection &middot; 2023&ndash;2025</span>
+            <h2>Recent <em>Portfolios</em></h2>
+          </div>
+          <div>
+            <a class="link" href="work.html">View all galleries (20) &rarr;</a>
+          </div>
+        </div>
+
+        <div class="selected">
+          <figure class="s1 curtain tilt-frame">
+            <a class="frame ratio-32" href="work.html">
+              <span class="frame-mark mark-tl">+</span>
+              <span class="frame-mark mark-br">+</span>
+              <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=1600" alt="Couples portrait along the coastline in Alibaug" width="1600" height="1067" loading="lazy">
+            </a>
+            <figcaption>
+              <span class="t">Ten quiet minutes &middot; <em>Alibaug</em></span>
+              <span class="exif-tag">Weddings, 2024 &middot; 85mm f/1.4</span>
+            </figcaption>
+          </figure>
+
+          <figure class="s2 curtain tilt-frame">
+            <a class="frame ratio-45" href="work.html">
+              <span class="frame-mark mark-tr">+</span>
+              <span class="frame-mark mark-bl">+</span>
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1200" alt="Studio north light portrait in Mumbai" width="1200" height="1500" loading="lazy">
+            </a>
+            <figcaption>
+              <span class="t">Studio, north light &middot; <em>Mumbai</em></span>
+              <span class="exif-tag">Portraits, 2024</span>
+            </figcaption>
+          </figure>
+
+          <figure class="s3 curtain tilt-frame">
+            <a class="frame ratio-45" href="work.html">
+              <span class="frame-mark mark-tl">+</span>
+              <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200" alt="Editorial lookbook in Fort Kochi" width="1200" height="1500" loading="lazy">
+            </a>
+            <figcaption>
+              <span class="t">Linen, for a Kochi label</span>
+              <span class="exif-tag">Editorial, 2025</span>
+            </figcaption>
+          </figure>
+
+          <figure class="s4 curtain tilt-frame">
+            <a class="frame ratio-32" href="work.html">
+              <span class="frame-mark mark-tr">+</span>
+              <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=1600" alt="Ceremony in South Goa" width="1600" height="1067" loading="lazy">
+            </a>
+            <figcaption>
+              <span class="t">Holding on &middot; <em>Goa</em></span>
+              <span class="exif-tag">Weddings, 2025</span>
+            </figcaption>
+          </figure>
+
+          <figure class="s5 curtain tilt-frame">
+            <a class="frame ratio-wide" href="work.html">
+              <span class="frame-mark mark-tl">+</span>
+              <span class="frame-mark mark-tr">+</span>
+              <span class="frame-mark mark-bl">+</span>
+              <span class="frame-mark mark-br">+</span>
+              <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=2200" alt="Cold morning light across Ladakh lake" width="2200" height="942" loading="lazy">
+            </a>
+            <figcaption>
+              <span class="t">Pangong, before sunrise &middot; <em>Ladakh</em></span>
+              <span class="exif-tag">Places, 2023 &middot; Natural Twilight</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Color Science & Darkroom Curation -->
+    <section class="section wrap grading-showcase">
+      <div class="section-head">
+        <div>
+          <span class="label">Color Science &amp; Darkroom Curation</span>
+          <h2>Raw Sensor vs <em>Archival Grade</em></h2>
+        </div>
+        <div>
+          <span class="caption">Drag the dividing bar to inspect the tonal curve</span>
+        </div>
+      </div>
+
+      <!-- Film Emulsion Stock Emulation Bar -->
+      <div class="film-stock-bar">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <span class="label" style="margin: 0;">Film Emulsion:</span>
+          <div class="stock-btn-group" role="group" aria-label="Select photographic emulsion stock">
+            <button type="button" class="stock-btn" data-stock="portra" aria-pressed="true">Kodak Portra 400</button>
+            <button type="button" class="stock-btn" data-stock="trix" aria-pressed="false">Kodak Tri-X 400 (B&amp;W)</button>
+            <button type="button" class="stock-btn" data-stock="fuji" aria-pressed="false">Fujifilm Pro 400H</button>
+          </div>
+        </div>
+        <div class="stock-status">
+          <span>Active:</span>
+          <strong id="activeStockDisplay">Kodak Portra 400 (Warm Skin / Gold Shadows)</strong>
+        </div>
+      </div>
+
+      <div class="grading-slider" id="gradingSlider" role="slider" aria-label="Compare RAW sensor capture with color graded final print">
+        <!-- Graded Master Image (Background) -->
+        <div class="slider-graded">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=85&w=1800" alt="Finished color graded fine art photograph">
+        </div>
+        <!-- Raw Sensor Capture (Overlay) -->
+        <div class="slider-raw">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=85&w=1800" alt="Unprocessed flat digital raw capture">
+        </div>
+        <!-- Draggable Hairline Handle -->
+        <div class="slider-handle">
+          <div class="slider-handle-tag">&larr; RAW &middot; GRADED &rarr;</div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px; color: var(--muted); font-family: var(--mono); flex-wrap: wrap; gap: 8px;">
+        <span>LEFT: Uncalibrated Sensor Flat Profile</span>
+        <span>RIGHT: Bespoke Fine-Art Palette &middot; Silver Halide Tones</span>
+      </div>
+    </section>
+
+    <!-- Interactive Optical Lens & Perspective Simulator -->
+    <section class="section wrap lens-simulator-section">
+      <div class="section-head">
+        <div>
+          <span class="label">Optics &amp; Perspective Physics</span>
+          <h2>Field of View &amp; <em>Lens Geometry</em></h2>
+        </div>
+        <div>
+          <span class="caption">Toggle focal lengths to simulate optical compression &amp; framing</span>
+        </div>
+      </div>
+
+      <div class="lens-simulator" id="lensSimulator">
+        <div class="lens-sim-stage">
+          <img class="lens-target-img" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=85&w=1800" alt="Documentary perspective study">
+          <div class="lens-reticle"></div>
+          <div class="lens-viewfinder-overlay">
+            <span>[+] CENTER AF &middot; SPOT 1.5%</span>
+            <span>1/500s &middot; ISO 400</span>
+          </div>
+          <div class="lens-viewfinder-bottom">
+            <span>HASSELBLAD 907X</span>
+            <span id="simLensFov">75.4&deg; Angle of View</span>
+          </div>
+        </div>
+
+        <div class="lens-sim-info">
+          <div>
+            <span class="label">Select Focal Length:</span>
+            <div class="lens-btn-group" role="group" aria-label="Select focal length">
+              <button type="button" class="lens-btn" data-lens="28mm" aria-pressed="true">28mm Wide</button>
+              <button type="button" class="lens-btn" data-lens="50mm" aria-pressed="false">50mm Normal</button>
+              <button type="button" class="lens-btn" data-lens="85mm" aria-pressed="false">85mm Tele</button>
+            </div>
+            <h3 id="simLensName">28mm f/2.8 Elmarit (Documentary Environmental)</h3>
+            <p id="simLensDesc" style="color: var(--muted); font-size: 15px; line-height: 1.6; margin: 0;">
+              Wide context; captures the full room architecture, surrounding family, and atmospheric spatial depth.
+            </p>
+          </div>
+
+          <div class="lens-metadata-grid">
+            <div>
+              <span>Optical Glass</span>
+              <strong>German Aspherical Prime</strong>
+            </div>
+            <div>
+              <span>Aperture Setting</span>
+              <strong>f/2.8 Circular Diaphragm</strong>
+            </div>
+            <div>
+              <span>Distortion Profile</span>
+              <strong>&lt; 0.2% Linear Curvature</strong>
+            </div>
+            <div>
+              <span>Focus Distance</span>
+              <strong>1.8m Subject Plane</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Client Quote -->
+    <section class="section section--dark">
+      <div class="wrap quote-block">
+        <div>
+          <span class="label">From a recent client</span>
+          <p style="font-size: 14px; margin-top: 14px; color: #8e877c;">
+            Udaipur, November 2024<br>
+            Commissioned for three days
+          </p>
+        </div>
+        <blockquote>
+          <p>
+            &ldquo;Looking back through our gallery was like reliving the day without anyone posing us. Aditi caught the things we didn't even notice happening: my father tearing up during the breakfast toast, and the late night dance with our childhood friends when everyone had taken their shoes off.&rdquo;
+          </p>
+          <cite class="caption">
+            <strong>Riya &amp; Kunal Desai</strong> &mdash; Bombay &amp; London
+          </cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- Working Method -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="label">Ethos &amp; Technique</span>
+            <h2>How I <em>Work</em></h2>
+          </div>
+        </div>
+
+        <div class="process">
+          <div class="curtain">
+            <span class="label">01 / Preparation</span>
+            <h3>Before the day</h3>
+            <p>
+              We speak about the rhythm of the day, family arrangements, and what matters to you. I scout locations beforehand and plan around natural light transitions so nothing feels rushed.
+            </p>
+          </div>
+          <div class="curtain">
+            <span class="label">02 / Observation</span>
+            <h3>On the day</h3>
+            <p>
+              I work with quiet prime lenses and minimal gear. No bulky rigs, no constant directions, and no interrupting conversations. The best photographs happen when people forget the lens exists.
+            </p>
+          </div>
+          <div class="curtain">
+            <span class="label">03 / Archival Delivery</span>
+            <h3>Afterwards</h3>
+            <p>
+              Every frame is individually color graded with an archival palette. You receive an online gallery with direct full-resolution downloads and a private selection tool for print albums.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direct Booking Callout -->
+    <section class="section section--tint">
+      <div class="wrap cta">
+        <span class="label">Commission Inquiries</span>
+        <h2>Currently reserving dates for <em>2025 &amp; 2026</em>.</h2>
+        <div class="cta-row">
+          <p>
+            I accept a limited number of commissions each season to ensure personal attention and archival care for every gathering. Check real-time studio availability or reserve your date directly.
+          </p>
+          <div>
+            <a class="btn btn--solid" href="booking.html">
+              <span>Check Availability &amp; Book &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <h2>Aditi Rane <br><a href="booking.html">Inquire for 2025&ndash;2026</a></h2>
+        </div>
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="work.html">Portfolio</a></li>
+            <li><a href="about.html">About Aditi</a></li>
+            <li><a href="services.html">Services &amp; Pricing</a></li>
+            <li><a href="booking.html">Check Availability</a></li>
+            <li><a href="contact.html">General Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Client Access</h4>
+          <ul>
+            <li><a href="client/index.html">Client Portal</a></li>
+            <li><a href="client/index.html">Download High-Res</a></li>
+            <li><a href="client/index.html">Select Favorites</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li>Bandra West, Mumbai</li>
+            <li>+91 98200 41736</li>
+            <li>studio@aditirane.com</li>
+            <li><a href="../studio/index.html" style="color: #6a645b;">Studio Admin &rarr;</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; Aditi Rane Photography. All rights reserved.</div>
+        <div>Archival Documentary &amp; Portrait Photography &middot; Mumbai &middot; Worldwide</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/creative-interactions.js"></script>
+  <script>
+    (function() {
+      // Header scroll state
+      var header = document.getElementById('siteHeader');
+      var lastY = window.scrollY;
+      window.addEventListener('scroll', function() {
+        var currentY = window.scrollY;
+        if (currentY > 40) header.classList.add('is-scrolled');
+        else header.classList.remove('is-scrolled');
+        if (currentY > lastY && currentY > 180) header.classList.add('is-hidden');
+        else header.classList.remove('is-hidden');
+        lastY = currentY;
+      }, { passive: true });
+
+      // Mobile menu
+      var toggle = document.getElementById('menuToggle');
+      var close = document.getElementById('menuClose');
+      var menu = document.getElementById('mobileMenu');
+      if (toggle) toggle.addEventListener('click', function() { menu.classList.add('is-open'); });
+      if (close) close.addEventListener('click', function() { menu.classList.remove('is-open'); });
+
+      // Hero slider
+      var slides = document.querySelectorAll('.hero-slide');
+      var count = document.getElementById('heroCount');
+      var cap = document.getElementById('heroCaption');
+      var prev = document.getElementById('heroPrev');
+      var next = document.getElementById('heroNext');
+      var captions = [
+        'Udaipur, Rajasthan &middot; 50mm f/1.8 &middot; 1/500s &middot; ISO 200',
+        'Bandra West, Mumbai &middot; 85mm f/1.4 &middot; 1/250s &middot; ISO 400',
+        'Malshej Ghat &middot; 35mm f/2.8 &middot; 1/125s &middot; ISO 100'
+      ];
+      var idx = 0;
+      function show(n) {
+        slides[idx].classList.remove('is-active');
+        idx = (n + slides.length) % slides.length;
+        slides[idx].classList.add('is-active');
+        if (count) count.textContent = '0' + (idx + 1) + ' / 0' + slides.length;
+        if (cap) cap.innerHTML = captions[idx] || '';
+      }
+      if (prev && next) {
+        prev.addEventListener('click', function() { show(idx - 1); });
+        next.addEventListener('click', function() { show(idx + 1); });
+      }
+      setInterval(function() { show(idx + 1); }, 7500);
+    })();
+  </script>
+</body>
+</html>

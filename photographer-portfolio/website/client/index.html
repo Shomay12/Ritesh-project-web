@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client Portal &mdash; Aditi Rane Photography</title>
+  <meta name="description" content="Private gallery access and archival downloads for clients.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Top Studio Control & Ticker Bar -->
+  <div class="studio-ticker-bar">
+    <div class="wrap">
+      <div>
+        <span>Private Client Portal &middot; Secured by Supabase Row Level Security</span>
+      </div>
+      <div class="studio-ticker-controls">
+        <button type="button" class="ticker-btn" id="darkroomToggleBtn" aria-pressed="false" title="Toggle analog darkroom amber safelight palette">Mode: Daylight</button>
+        <span style="color: #48443e;">&middot;</span>
+        <button type="button" class="ticker-btn" id="soundToggleBtn" aria-pressed="false" title="Toggle mechanical leaf shutter acoustic feedback">Shutter Sound: OFF</button>
+        <span style="color: #48443e;">&middot;</span>
+        <span>IST: <strong class="live-clock" id="liveStudioClock">Loading...</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="wrap">
+      <a class="wordmark" href="../index.html">Aditi Rane <span>Client Archive</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="../work.html">Portfolio</a>
+        <a href="../services.html">Services</a>
+        <a href="../booking.html">Check Dates</a>
+        <a href="index.html" aria-current="page">Client Portal</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu">Menu</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu-top">
+      <a class="wordmark" href="../index.html">Aditi Rane</a>
+      <button class="menu-toggle" id="menuClose" type="button">Close</button>
+    </div>
+    <nav>
+      <a href="../work.html">Portfolio</a>
+      <a href="../services.html">Services</a>
+      <a href="../booking.html">Check Dates</a>
+      <a href="index.html" aria-current="page">Client Portal</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <!-- Unauthenticated State: Sign In Form -->
+    <div id="loginView" class="portal-login" style="display: none;">
+      <div class="form-side">
+        <span class="label">Private Client Portal</span>
+        <h1>Enter your <em>gallery</em>.</h1>
+        <p>
+          Enter the email address associated with your commission. I will send you a passwordless sign-in link to inspect your proofs, select album favorites, and download your full-resolution photographs.
+        </p>
+
+        <form id="magicLinkForm" novalidate>
+          <div class="field">
+            <label for="clientEmail">Your Email Address</label>
+            <input type="email" id="clientEmail" name="email" placeholder="client@example.com" required>
+            <span class="error" id="emailError"></span>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <button type="submit" class="btn btn--solid" id="loginBtn">
+              <span>Request Access Link &rarr;</span>
+            </button>
+          </div>
+          <div id="loginStatus" class="form-status"></div>
+        </form>
+
+        <div id="magicSent" class="sent">
+          <p>Sign-in link sent.</p>
+          <p class="caption">
+            Check your inbox at <strong id="sentEmailDisplay"></strong>. Click the private link inside to open your galleries directly. You may close this window.
+          </p>
+        </div>
+
+        <div id="demoNotice" class="notice" style="margin-top: 36px; display: none;">
+          <strong>Demo Mode Active:</strong> Supabase keys are not yet configured in <code>config.js</code>. Type any email (or use <code>client@example.com</code>) and click to view the sample gallery immediately.
+        </div>
+      </div>
+
+      <div class="side-img curtain is-in">
+        <span class="frame-mark mark-tl">+</span>
+        <span class="frame-mark mark-br">+</span>
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1600" alt="Client wedding moment">
+      </div>
+    </div>
+
+    <!-- Authenticated State: Client Galleries Index -->
+    <div id="galleriesView" class="wrap" style="display: none; padding-top: 60px;">
+      <div class="section-head">
+        <div>
+          <span class="label">Signed In As <span id="userEmailSpan"></span></span>
+          <h1 style="font-size: clamp(38px, 5vw, 72px);">Your Private <em>Collections</em></h1>
+        </div>
+        <div>
+          <button type="button" class="btn" id="signOutBtn">Sign Out</button>
+        </div>
+      </div>
+
+      <div class="gallery-index" id="galleryList">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/demo-store.js"></script>
+  <script src="../assets/js/emails.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/creative-interactions.js"></script>
+  <script>
+    (function() {
+      var loginView = document.getElementById('loginView');
+      var galleriesView = document.getElementById('galleriesView');
+      var loginForm = document.getElementById('magicLinkForm');
+      var clientEmail = document.getElementById('clientEmail');
+      var loginBtn = document.getElementById('loginBtn');
+      var loginStatus = document.getElementById('loginStatus');
+      var magicSent = document.getElementById('magicSent');
+      var sentEmailDisplay = document.getElementById('sentEmailDisplay');
+      var userEmailSpan = document.getElementById('userEmailSpan');
+      var galleryList = document.getElementById('galleryList');
+      var signOutBtn = document.getElementById('signOutBtn');
+      var demoNotice = document.getElementById('demoNotice');
+
+      if (!Api.live) {
+        demoNotice.style.display = 'block';
+      }
+
+      function checkSession() {
+        Api.auth.user('client').then(function(user) {
+          if (user && user.email) {
+            showGalleries(user.email);
+          } else {
+            loginView.style.display = 'grid';
+            galleriesView.style.display = 'none';
+          }
+        });
+      }
+
+      function showGalleries(email) {
+        loginView.style.display = 'none';
+        galleriesView.style.display = 'block';
+        userEmailSpan.textContent = email;
+
+        Api.portal.galleries().then(function(galleries) {
+          galleryList.innerHTML = '';
+          if (!galleries || !galleries.length) {
+            galleryList.innerHTML = '<div class="empty-note">No published galleries found for this account. Contact the studio if you believe this is an error.</div>';
+            return;
+          }
+
+          galleries.forEach(function(g) {
+            var card = document.createElement('div');
+            card.className = 'curtain is-in tilt-frame';
+            var coverImg = g.coverUrl || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1200';
+
+            card.innerHTML =
+              '<a href="gallery.html?id=' + encodeURIComponent(g.id) + '">' +
+                '<div class="frame ratio-32">' +
+                  '<span class="frame-mark mark-tl">+</span>' +
+                  '<img src="' + Api.format.esc(coverImg) + '" alt="' + Api.format.esc(g.title) + '">' +
+                '</div>' +
+                '<span class="t">' + Api.format.esc(g.title) + '</span>' +
+                '<div class="caption">' +
+                  (g.event_date ? Api.format.longDate(g.event_date) : '') +
+                  (g.client_name ? ' &middot; ' + Api.format.esc(g.client_name) : '') +
+                '</div>' +
+              '</a>';
+
+            galleryList.appendChild(card);
+          });
+        });
+      }
+
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = clientEmail.value.trim();
+        if (!email) {
+          document.getElementById('emailError').textContent = 'Please provide your email address.';
+          return;
+        }
+        document.getElementById('emailError').textContent = '';
+        loginBtn.disabled = true;
+        loginBtn.querySelector('span').textContent = 'Verifying...';
+
+        var redirectUrl = window.location.origin + window.location.pathname;
+
+        Api.auth.sendMagicLink(email, redirectUrl).then(function(res) {
+          if (res.demo) {
+            showGalleries(email);
+          } else {
+            loginForm.style.display = 'none';
+            sentEmailDisplay.textContent = email;
+            magicSent.classList.add('is-shown');
+          }
+        }).catch(function(err) {
+          console.error(err);
+          loginBtn.disabled = false;
+          loginBtn.querySelector('span').textContent = 'Request Access Link \u2192';
+          loginStatus.textContent = err.message || 'Unable to send link. Please contact the studio.';
+        });
+      });
+
+      signOutBtn.addEventListener('click', function() {
+        Api.auth.signOut('client').then(function() {
+          window.location.reload();
+        });
+      });
+
+      checkSession();
+    })();
+  </script>
+</body>
+</html>

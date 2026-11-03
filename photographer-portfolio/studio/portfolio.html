@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage Portfolio &mdash; Aditi Rane Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/studio.css">
+  <script src="assets/js/img-fallback.js"></script>
+</head>
+<body>
+  <header class="studio-nav">
+    <div class="wrap">
+      <a class="studio-brand" href="index.html">Aditi Rane <span>Studio</span></a>
+      <nav class="studio-links" aria-label="Studio navigation">
+        <a href="index.html">Dashboard</a>
+        <a href="bookings.html">Bookings</a>
+        <a href="galleries.html">Client Galleries</a>
+        <a href="upload.html">Upload Center</a>
+        <a href="portfolio.html" aria-current="page">Portfolio</a>
+        <a href="messages.html">Messages</a>
+      </nav>
+      <div class="studio-right">
+        <a href="../work.html" target="_blank">View Live Portfolio &rarr;</a>
+        <button type="button" id="signOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-bottom: 80px;">
+    <div class="view-head">
+      <div>
+        <span class="label">Public Website Content</span>
+        <h1>Portfolio <em>Curation</em></h1>
+      </div>
+      <div class="view-actions">
+        <a class="btn btn--solid" href="upload.html">+ Upload to Portfolio</a>
+      </div>
+    </div>
+
+    <!-- Portfolio Table -->
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Image</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Year</th>
+            <th>Order</th>
+            <th>Visibility</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="portfolioTbody">
+          <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--muted);">Loading portfolio...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/demo-store.js"></script>
+  <script src="assets/js/emails.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    (function() {
+      Api.auth.isOwner().then(function(isOwner) {
+        if (!isOwner) window.location.href = 'login.html';
+      });
+
+      document.getElementById('signOutBtn').addEventListener('click', function() {
+        Api.auth.signOut('owner').then(function() { window.location.href = 'login.html'; });
+      });
+
+      var tbody = document.getElementById('portfolioTbody');
+      var items = [];
+
+      function loadItems() {
+        Api.studio.portfolio().then(function(rows) {
+          items = rows;
+          renderTable();
+        });
+      }
+
+      function renderTable() {
+        tbody.innerHTML = '';
+        if (!items.length) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--muted);">No portfolio items found. Click &ldquo;+ Upload to Portfolio&rdquo; to add your first piece.</td></tr>';
+          return;
+        }
+
+        items.forEach(function(item) {
+          var tr = document.createElement('tr');
+          var thumbUrl = item.thumb || item.src || item.image_path;
+
+          tr.innerHTML =
+            '<td><img src="' + Api.format.esc(thumbUrl) + '" alt="" style="width:60px; height:45px; object-fit:cover; background:var(--paper-3);"></td>' +
+            '<td><div class="cell-title">' + Api.format.esc(item.title) + '</div></td>' +
+            '<td>' + Api.format.esc(item.category) + '</td>' +
+            '<td>' + Api.format.esc(item.location || '—') + '</td>' +
+            '<td>' + (item.year || '—') + '</td>' +
+            '<td>' + item.sort_order + '</td>' +
+            '<td><button type="button" class="badge ' + (item.published ? 'badge--published' : 'badge--draft') + ' toggle-pub">' + (item.published ? 'Published' : 'Hidden') + '</button></td>' +
+            '<td><button type="button" class="btn btn--danger btn--small del-btn">Delete</button></td>';
+
+          // Toggle published
+          tr.querySelector('.toggle-pub').addEventListener('click', function() {
+            var newPub = !item.published;
+            Api.studio.updatePortfolio(item.id, { published: newPub }).then(function() {
+              item.published = newPub;
+              renderTable();
+            });
+          });
+
+          // Delete
+          tr.querySelector('.del-btn').addEventListener('click', function() {
+            if (confirm('Delete photograph "' + item.title + '" from portfolio?')) {
+              Api.studio.deletePortfolio(item).then(function() {
+                items = items.filter(function(x) { return x.id !== item.id; });
+                renderTable();
+              });
+            }
+          });
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      loadItems();
+    })();
+  </script>
+</body>
+</html>
+
