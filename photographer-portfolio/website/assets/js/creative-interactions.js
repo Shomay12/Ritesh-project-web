@@ -119,7 +119,7 @@
     try {
       var saved = sessionStorage.getItem('studio_ambience_time') || localStorage.getItem('studio_ambience_time');
       var time = parseFloat(saved || '0');
-      if (time > 0 && isFinite(time)) {
+      if (time > 0.5 && isFinite(time)) {
         if (!ambienceAudio.duration || time < ambienceAudio.duration) {
           ambienceAudio.currentTime = time;
         }
@@ -131,7 +131,7 @@
     if (!ambienceAudio) return;
     try {
       var cur = ambienceAudio.currentTime;
-      if (cur > 0 && isFinite(cur)) {
+      if (cur > 0.5 && isFinite(cur)) {
         sessionStorage.setItem('studio_ambience_time', cur.toString());
         localStorage.setItem('studio_ambience_time', cur.toString());
       }
@@ -167,9 +167,7 @@
       });
 
       ambienceAudio.addEventListener('canplay', function () {
-        if (ambienceAudio.currentTime === 0) {
-          applySavedTimestamp();
-        }
+        applySavedTimestamp();
       });
 
       window.addEventListener('beforeunload', saveCurrentTimestamp);
@@ -211,6 +209,7 @@
             ambienceAudio.volume = ambienceTargetVolume;
             applySavedTimestamp();
             ambienceAudio.play().then(function () {
+              applySavedTimestamp();
               updateAmbienceButtons(true);
             }).catch(function () {});
           }
@@ -665,6 +664,7 @@
     if (window._seamlessNavInitialized) return;
     window._seamlessNavInitialized = true;
 
+    if (window.location.protocol === 'file:') return;
     if (!window.history || !window.history.pushState || !window.DOMParser) return;
 
     function isEligible(anchor) {
@@ -699,8 +699,8 @@
       }
 
       saveCurrentTimestamp();
-      mainEl.style.opacity = '0.4';
-      mainEl.style.transition = 'opacity 0.18s ease';
+      mainEl.style.opacity = '0.35';
+      mainEl.style.transition = 'opacity 0.15s ease';
 
       fetch(url)
         .then(function (res) {
@@ -751,14 +751,17 @@
           // Re-initialize modules on swapped DOM
           initModules();
 
-          // Execute page-specific inline scripts if present in new main
-          var scripts = newMain.querySelectorAll('script');
+          // Execute page-specific inline scripts from loaded document
+          var scripts = doc.querySelectorAll('body script:not([src])');
           scripts.forEach(function (s) {
-            try {
-              var runScript = new Function(s.textContent);
-              runScript();
-            } catch (err) {
-              console.warn('Script execution notice:', err);
+            var code = s.textContent.trim();
+            if (code) {
+              try {
+                var runScript = new Function(code);
+                runScript();
+              } catch (err) {
+                console.warn('Script execution notice:', err);
+              }
             }
           });
         })
