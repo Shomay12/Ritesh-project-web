@@ -1,5 +1,5 @@
 /* =====================================================================
-   Creative Interactions — Aditi Rane Photography
+   Creative Interactions — Ritesh Farswan Photography
    Analog film aesthetics, Web Audio shutter, RAW vs Graded comparison,
    Darkroom mode toggle, Film Stock emulation (Portra / Tri-X / Fuji),
    and Interactive Lens Focal Length Simulator.
@@ -222,17 +222,35 @@
     });
   }
 
+  function isProductionHosting() {
+    try {
+      var proto = window.location.protocol;
+      var host = window.location.hostname;
+      // Never auto-play in coding editor previews, webviews, or local development
+      if (proto === 'file:' || proto.indexOf('webview') !== -1) return false;
+      if (!host || host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host.indexOf('.local') !== -1) return false;
+      // In editor iframe panels
+      if (window.self !== window.top) return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function initAmbienceToggle() {
     var btns = document.querySelectorAll('#ambienceToggleBtn, #mobileAmbienceBtn');
-    initAmbienceAudio();
+    if (!btns.length) return;
 
+    var isLiveHosted = isProductionHosting();
     var saved = localStorage.getItem('studio_ambience_music');
-    // Enabled by default unless explicitly turned off by the user
-    if (saved !== 'off') {
+
+    // ONLY auto-play on live website hosting; NEVER in the local coding editor or file preview
+    if (isLiveHosted && saved !== 'off') {
+      initAmbienceAudio();
       ambienceEnabled = true;
       updateAmbienceButtons(true);
       startAmbienceMusic();
-      // Also register first interaction unlock
+      // Also register first interaction unlock for live site visitors
       function autoUnlockOnFirstGesture() {
         if (ambienceEnabled && ambienceAudio && ambienceAudio.paused) {
           ambienceAudio.play().then(function () {
@@ -256,6 +274,7 @@
         e.stopPropagation();
         ambienceEnabled = !ambienceEnabled;
         if (ambienceEnabled) {
+          initAmbienceAudio();
           startAmbienceMusic();
           updateAmbienceButtons(true);
           localStorage.setItem('studio_ambience_music', 'on');
